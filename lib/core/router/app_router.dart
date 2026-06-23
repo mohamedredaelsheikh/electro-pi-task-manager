@@ -6,7 +6,11 @@ import '../../features/auth/presentation/cubit/auth_cubit.dart';
 import '../../features/auth/presentation/cubit/auth_state.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
+import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/projects/presentation/cubit/projects_cubit.dart';
+import '../../features/projects/presentation/pages/projects_page.dart';
 import '../di/injection.dart';
+import '../widgets/main_shell.dart';
 
 abstract class AppRoutes {
   static const login = '/login';
@@ -50,23 +54,43 @@ final appRouter = GoRouter(
         child: const RegisterPage(),
       ),
     ),
-    // Placeholder routes — filled in by projects/tasks/profile features
+    ShellRoute(
+      builder: (_, _, child) => MainShell(child: child),
+      routes: [
+        GoRoute(
+          path: AppRoutes.projects,
+          builder: (_, _) => BlocProvider(
+            create: (_) => sl<ProjectsCubit>()..loadProjects(),
+            child: const ProjectsPage(),
+          ),
+        ),
+        GoRoute(
+          path: AppRoutes.profile,
+          builder: (_, _) => const ProfilePage(),
+        ),
+      ],
+    ),
+    // Project details — full-screen, outside the shell (tasks feature fills this)
     GoRoute(
-      path: AppRoutes.projects,
-      builder: (_, _) => const _PlaceholderPage(label: 'Projects'),
+      path: AppRoutes.projectDetails,
+      builder: (context, state) {
+        final id = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
+        return _ProjectDetailsPlaceholder(projectId: id);
+      },
     ),
   ],
 );
 
-class _PlaceholderPage extends StatelessWidget {
-  final String label;
-  const _PlaceholderPage({required this.label});
+// Temporary placeholder — replaced when the tasks feature lands.
+class _ProjectDetailsPlaceholder extends StatelessWidget {
+  final int projectId;
+  const _ProjectDetailsPlaceholder({required this.projectId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(label)),
-      body: Center(child: Text('$label — coming soon')),
+      appBar: AppBar(title: Text('Project #$projectId')),
+      body: const Center(child: Text('Tasks — coming soon')),
     );
   }
 }

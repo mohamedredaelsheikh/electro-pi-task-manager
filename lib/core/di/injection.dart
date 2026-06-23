@@ -12,6 +12,11 @@ import '../../features/auth/domain/usecases/login_usecase.dart';
 import '../../features/auth/domain/usecases/logout_usecase.dart';
 import '../../features/auth/domain/usecases/register_usecase.dart';
 import '../../features/auth/presentation/cubit/auth_cubit.dart';
+import '../../features/projects/data/datasources/projects_remote_datasource.dart';
+import '../../features/projects/data/repositories/projects_repository_impl.dart';
+import '../../features/projects/domain/repositories/projects_repository.dart';
+import '../../features/projects/domain/usecases/get_projects_usecase.dart';
+import '../../features/projects/presentation/cubit/projects_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -50,4 +55,18 @@ Future<void> configureDependencies() async {
       checkAuth: sl(),
     ),
   );
+
+  // Projects — data
+  sl.registerLazySingleton<ProjectsRemoteDataSource>(
+    () => ProjectsRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<ProjectsRepository>(
+    () => ProjectsRepositoryImpl(sl(), sl()),
+  );
+
+  // Projects — domain
+  sl.registerLazySingleton(() => GetProjectsUseCase(sl()));
+
+  // Projects — presentation
+  sl.registerFactory(() => ProjectsCubit(sl()));
 }
