@@ -16,6 +16,10 @@ import '../../features/projects/data/datasources/projects_remote_datasource.dart
 import '../../features/projects/data/repositories/projects_repository_impl.dart';
 import '../../features/projects/domain/repositories/projects_repository.dart';
 import '../../features/projects/domain/usecases/get_projects_usecase.dart';
+import '../../features/profile/data/repositories/profile_repository_impl.dart';
+import '../../features/profile/domain/repositories/profile_repository.dart';
+import '../../features/profile/domain/usecases/get_profile_usecase.dart';
+import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/projects/presentation/cubit/projects_cubit.dart';
 import '../../features/tasks/data/datasources/tasks_remote_datasource.dart';
 import '../../features/tasks/data/repositories/tasks_repository_impl.dart';
@@ -62,6 +66,17 @@ Future<void> configureDependencies() async {
       checkAuth: sl(),
     ),
   );
+
+  // Profile — data
+  sl.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(sl()),
+  );
+
+  // Profile — domain
+  sl.registerLazySingleton(() => GetProfileUseCase(sl()));
+
+  // Profile — presentation
+  sl.registerFactory(() => ProfileCubit(sl()));
 
   // Projects — data
   sl.registerLazySingleton<ProjectsRemoteDataSource>(
