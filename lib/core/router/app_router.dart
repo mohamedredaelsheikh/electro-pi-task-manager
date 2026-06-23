@@ -5,6 +5,7 @@ import '../../features/auth/presentation/cubit/auth_cubit.dart';
 import '../../features/auth/presentation/cubit/auth_state.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
+import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/projects/presentation/cubit/projects_cubit.dart';
 import '../../features/projects/presentation/pages/projects_page.dart';
@@ -67,7 +68,10 @@ final appRouter = GoRouter(
         ),
         GoRoute(
           path: AppRoutes.profile,
-          builder: (_, _) => const ProfilePage(),
+          builder: (_, _) => BlocProvider(
+            create: (_) => sl<ProfileCubit>()..loadProfile(),
+            child: const ProfilePage(),
+          ),
         ),
       ],
     ),
