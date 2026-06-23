@@ -1,0 +1,72 @@
+import 'dart:math';
+
+import '../../../../core/error/failures.dart';
+import '../../../../core/network/api_result.dart';
+import '../../domain/entities/user.dart';
+import '../../domain/repositories/auth_repository.dart';
+import '../datasources/auth_local_datasource.dart';
+import '../datasources/auth_remote_datasource.dart';
+import '../models/user_model.dart';
+
+class AuthRepositoryImpl implements AuthRepository {
+  final AuthRemoteDataSource _remote;
+  final AuthLocalDataSource _local;
+
+  const AuthRepositoryImpl(this._remote, this._local);
+
+  @override
+  Future<ApiResult<User>> login({
+    required String email,
+    required String password,
+  }) async {
+    if (email.trim().isEmpty || password.trim().isEmpty) {
+      return const ApiFailure(AuthFailure('Email and password are required.'));
+    }
+
+    final result = await _remote.findUserByEmail(email.trim().toLowerCase());
+
+    if (result case ApiSuccess(:final data)) {
+      final token = _fakeToken(data.id);
+      await _local.cacheUser(data, token);
+      return ApiSuccess(data);
+    }
+    return ApiFailure((result as ApiFailure).failure);
+  }
+
+  @override
+  Future<ApiResult<User>> register({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    if (name.trim().isEmpty ||
+        email.trim().isEmpty ||
+        password.trim().isEmpty) {
+      return const ApiFailure(AuthFailure('All fields are required.'));
+    }
+
+    // JSONPlaceholder is read-only — registration is stored locally only.
+    final user = UserModel(
+      id: Random().nextInt(90000) + 10000,
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+    );
+    await _local.cacheUser(user, _fakeToken(user.id));
+    return ApiSuccess(user);
+  }
+
+  @override
+  Future<ApiResult<void>> logout() async {
+    await _local.clearUser();
+    return const ApiSuccess(null);
+  }
+
+  @override
+  ApiResult<User?> getCachedUser() {
+    if (!_local.isLoggedIn) return const ApiSuccess(null);
+    return ApiSuccess(_local.getCachedUser());
+  }
+
+  String _fakeToken(int userId) =>
+      'fake_jwt_${userId}_${DateTime.now().millisecondsSinceEpoch}';
+}
