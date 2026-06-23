@@ -17,6 +17,13 @@ import '../../features/projects/data/repositories/projects_repository_impl.dart'
 import '../../features/projects/domain/repositories/projects_repository.dart';
 import '../../features/projects/domain/usecases/get_projects_usecase.dart';
 import '../../features/projects/presentation/cubit/projects_cubit.dart';
+import '../../features/tasks/data/datasources/tasks_remote_datasource.dart';
+import '../../features/tasks/data/repositories/tasks_repository_impl.dart';
+import '../../features/tasks/domain/repositories/tasks_repository.dart';
+import '../../features/tasks/domain/usecases/create_task_usecase.dart';
+import '../../features/tasks/domain/usecases/get_tasks_usecase.dart';
+import '../../features/tasks/domain/usecases/update_task_status_usecase.dart';
+import '../../features/tasks/presentation/cubit/tasks_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -69,4 +76,27 @@ Future<void> configureDependencies() async {
 
   // Projects — presentation
   sl.registerFactory(() => ProjectsCubit(sl()));
+
+  // Tasks — data
+  sl.registerLazySingleton<TasksRemoteDataSource>(
+    () => TasksRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<TasksRepository>(
+    () => TasksRepositoryImpl(sl(), sl()),
+  );
+
+  // Tasks — domain
+  sl.registerLazySingleton(() => GetTasksUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateTaskStatusUseCase(sl()));
+  sl.registerLazySingleton(() => CreateTaskUseCase(sl()));
+
+  // Tasks — presentation (factoryParam lets the router inject projectId at runtime)
+  sl.registerFactoryParam<TasksCubit, int, void>(
+    (projectId, _) => TasksCubit(
+      projectId: projectId,
+      getTasks: sl(),
+      updateStatus: sl(),
+      createTask: sl(),
+    ),
+  );
 }

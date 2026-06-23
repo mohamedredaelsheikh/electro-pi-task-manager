@@ -44,6 +44,7 @@ class ProjectsPage extends StatelessWidget {
                   project: projects[index],
                   onTap: () => context.push(
                     AppRoutes.projectDetailsPath(projects[index].id),
+                    extra: projects[index].title,
                   ),
                 ),
               ),

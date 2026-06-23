@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,6 +8,8 @@ import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/projects/presentation/cubit/projects_cubit.dart';
 import '../../features/projects/presentation/pages/projects_page.dart';
+import '../../features/tasks/presentation/cubit/tasks_cubit.dart';
+import '../../features/tasks/presentation/pages/project_details_page.dart';
 import '../di/injection.dart';
 import '../widgets/main_shell.dart';
 
@@ -70,27 +71,17 @@ final appRouter = GoRouter(
         ),
       ],
     ),
-    // Project details — full-screen, outside the shell (tasks feature fills this)
+    // Project details — full-screen, outside the shell
     GoRoute(
       path: AppRoutes.projectDetails,
-      builder: (context, state) {
+      builder: (_, state) {
         final id = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
-        return _ProjectDetailsPlaceholder(projectId: id);
+        final title = (state.extra as String?) ?? 'Project #$id';
+        return BlocProvider(
+          create: (_) => sl<TasksCubit>(param1: id)..loadTasks(),
+          child: ProjectDetailsPage(projectId: id, projectTitle: title),
+        );
       },
     ),
   ],
 );
-
-// Temporary placeholder — replaced when the tasks feature lands.
-class _ProjectDetailsPlaceholder extends StatelessWidget {
-  final int projectId;
-  const _ProjectDetailsPlaceholder({required this.projectId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Project #$projectId')),
-      body: const Center(child: Text('Tasks — coming soon')),
-    );
-  }
-}
