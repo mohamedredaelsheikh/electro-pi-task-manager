@@ -11,42 +11,57 @@ class ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      project.title,
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.w600),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE0E3E5)),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        project.title,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF191C1E),
+                          height: 1.4,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  _StatusChip(status: project.status),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                project.description,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+                    const SizedBox(width: 8),
+                    _StatusChip(status: project.status),
+                  ],
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+                const SizedBox(height: 8),
+                Text(
+                  project.description,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF464555),
+                    height: 1.43,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -60,33 +75,37 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, bg) = switch (status) {
+    final (baseColor, textColor, label) = switch (status) {
       ProjectStatus.pending => (
+          const Color(0xFFF59E0B),
           const Color(0xFFB45309),
-          const Color(0xFFFEF3C7),
+          'Pending',
         ),
       ProjectStatus.inProgress => (
+          const Color(0xFF3B82F6),
           const Color(0xFF1D4ED8),
-          const Color(0xFFDBEAFE),
+          'In Progress',
         ),
       ProjectStatus.done => (
+          const Color(0xFF10B981),
           const Color(0xFF15803D),
-          const Color(0xFFDCFCE7),
+          'Done',
         ),
     };
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
+        color: baseColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(100),
       ),
       child: Text(
-        status.label,
+        label,
         style: TextStyle(
-          color: color,
-          fontSize: 12,
+          color: textColor,
+          fontSize: 11,
           fontWeight: FontWeight.w600,
+          letterSpacing: 0.2,
         ),
       ),
     );

@@ -9,6 +9,7 @@ import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/projects/presentation/cubit/projects_cubit.dart';
 import '../../features/projects/presentation/pages/projects_page.dart';
+import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/tasks/presentation/cubit/tasks_cubit.dart';
 import '../../features/tasks/presentation/pages/project_details_page.dart';
 import '../di/injection.dart';
@@ -21,6 +22,7 @@ abstract class AppRoutes {
   static const projects = '/projects';
   static const projectDetails = '/projects/:id';
   static const profile = '/profile';
+  static const settings = '/settings';
 
   static String projectDetailsPath(int id) => '/projects/$id';
 }
@@ -66,6 +68,10 @@ final appRouter = GoRouter(
             create: (_) => sl<ProfileCubit>()..loadProfile(),
             child: const ProfilePage(),
           ),
+        ),
+        GoRoute(
+          path: AppRoutes.settings,
+          builder: (_, _) => const SettingsPage(),
         ),
       ],
     ),

@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/network/api_result.dart';
+import '../../domain/enums/task_priority.dart';
 import '../../domain/enums/task_status.dart';
 import '../../domain/usecases/create_task_usecase.dart';
 import '../../domain/usecases/get_tasks_usecase.dart';
@@ -52,10 +53,13 @@ class TasksCubit extends Cubit<TasksState> {
     }
   }
 
-  Future<void> addTask(String title) async {
+  Future<void> addTask(
+    String title, {
+    TaskPriority priority = TaskPriority.medium,
+  }) async {
     final trimmed = title.trim();
     if (trimmed.isEmpty) return;
-    final result = await _createTask(title: trimmed);
+    final result = await _createTask(title: trimmed, priority: priority);
     if (isClosed) return;
     if (result case ApiSuccess(:final data)) {
       if (state case TasksLoaded(:final tasks)) {

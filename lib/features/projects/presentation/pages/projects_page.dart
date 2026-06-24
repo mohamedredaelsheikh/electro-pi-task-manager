@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_router.dart';
+import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../cubit/projects_cubit.dart';
@@ -15,13 +16,20 @@ class ProjectsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF7F9FB),
       appBar: AppBar(
-        title: const Text('Projects'),
+        backgroundColor: const Color(0xFFF7F9FB),
+        scrolledUnderElevation: 1,
+        surfaceTintColor: Colors.transparent,
+        shadowColor: const Color(0x14191C1E),
+        title: const AppBarLogo(title: 'Projects'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_rounded, color: Color(0xFF464555)),
+            tooltip: 'Refresh',
             onPressed: () => context.read<ProjectsCubit>().loadProjects(),
           ),
+          const SizedBox(width: 4),
         ],
       ),
       body: BlocBuilder<ProjectsCubit, ProjectsState>(
@@ -31,14 +39,14 @@ class ProjectsPage extends StatelessWidget {
             ),
           ProjectsLoaded(:final projects) when projects.isEmpty =>
             EmptyStateWidget(
-              icon: Icons.folder_open,
+              icon: Icons.folder_open_rounded,
               title: 'No projects yet',
               subtitle: 'Your projects will appear here.',
             ),
           ProjectsLoaded(:final projects) => RefreshIndicator(
               onRefresh: () => context.read<ProjectsCubit>().loadProjects(),
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.only(top: 8, bottom: 24),
                 itemCount: projects.length,
                 itemBuilder: (context, index) => ProjectCard(
                   project: projects[index],
@@ -58,3 +66,4 @@ class ProjectsPage extends StatelessWidget {
     );
   }
 }
+

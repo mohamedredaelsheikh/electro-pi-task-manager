@@ -1,5 +1,6 @@
 import '../../../../core/network/api_result.dart';
 import '../entities/task.dart';
+import '../enums/task_priority.dart';
 import '../repositories/tasks_repository.dart';
 
 class CreateTaskUseCase {
@@ -13,7 +14,10 @@ class CreateTaskUseCase {
 
   CreateTaskUseCase(this._repository);
 
-  Future<ApiResult<Task>> call({required String title}) async {
+  Future<ApiResult<Task>> call({
+    required String title,
+    TaskPriority priority = TaskPriority.medium,
+  }) async {
     final result = await _repository.createTask(title: title);
     if (result case ApiSuccess(:final data)) {
       return ApiSuccess(Task(
@@ -21,7 +25,7 @@ class CreateTaskUseCase {
         userId: data.userId,
         title: data.title,
         status: data.status,
-        priority: data.priority,
+        priority: priority,
       ));
     }
     return result;

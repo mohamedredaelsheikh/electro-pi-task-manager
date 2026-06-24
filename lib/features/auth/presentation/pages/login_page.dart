@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_router.dart';
+import '../../../../core/widgets/app_logo.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../widgets/auth_text_field.dart';
@@ -18,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _staySignedIn = false;
 
   @override
   void dispose() {
@@ -50,96 +52,237 @@ class _LoginPageState extends State<LoginPage> {
             );
           }
         },
-        child: SafeArea(
-          child: Center(
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFFE5E2FF), Color(0xFFF7F9FB)],
+              stops: [0.0, 0.55],
+            ),
+          ),
+          child: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SizedBox(height: 48),
-                    Text(
-                      'Welcome back',
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Sign in to continue',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant,
-                          ),
-                    ),
-                    const SizedBox(height: 40),
-                    AuthTextField(
-                      controller: _emailController,
-                      label: 'Email',
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) {
-                          return 'Email is required';
-                        }
-                        if (!v.contains('@')) return 'Enter a valid email';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    AuthTextField(
-                      controller: _passwordController,
-                      label: 'Password',
-                      obscure: true,
-                      textInputAction: TextInputAction.done,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) {
-                          return 'Password is required';
-                        }
-                        if (v.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 32),
-                    BlocBuilder<AuthCubit, AuthState>(
-                      builder: (context, state) {
-                        return FilledButton(
-                          onPressed:
-                              state is AuthLoading ? null : _submit,
-                          child: state is AuthLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Text('Sign In'),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Don't have an account?"),
-                        TextButton(
-                          onPressed: () => context.push(AppRoutes.register),
-                          child: const Text('Register'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  const SizedBox(height: 40),
+                  const AppLogo(),
+                  const SizedBox(height: 28),
+                  _LoginCard(
+                    formKey: _formKey,
+                    emailController: _emailController,
+                    passwordController: _passwordController,
+                    staySignedIn: _staySignedIn,
+                    onStaySignedInChanged: (v) =>
+                        setState(() => _staySignedIn = v ?? false),
+                    onSubmit: _submit,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Don't have an account?",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      TextButton(
+                        onPressed: () => context.push(AppRoutes.register),
+                        child: const Text('Sign Up'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  const _Footer(),
+                  const SizedBox(height: 24),
+                ],
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+
+class _LoginCard extends StatelessWidget {
+  final GlobalKey<FormState> formKey;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+  final bool staySignedIn;
+  final ValueChanged<bool?> onStaySignedInChanged;
+  final VoidCallback onSubmit;
+
+  const _LoginCard({
+    required this.formKey,
+    required this.emailController,
+    required this.passwordController,
+    required this.staySignedIn,
+    required this.onStaySignedInChanged,
+    required this.onSubmit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE0E3E5)),
+      ),
+      padding: const EdgeInsets.all(24),
+      child: Form(
+        key: formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Welcome Back',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF191C1E),
+                  ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Please enter your details to continue.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+            ),
+            const SizedBox(height: 24),
+            AuthTextField(
+              controller: emailController,
+              label: 'Email Address',
+              hint: 'name@company.com',
+              keyboardType: TextInputType.emailAddress,
+              prefixIcon: Icon(
+                Icons.mail_outline_rounded,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) return 'Email is required';
+                if (!v.contains('@')) return 'Enter a valid email';
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            AuthTextField(
+              controller: passwordController,
+              label: 'Password',
+              obscure: true,
+              textInputAction: TextInputAction.done,
+              prefixIcon: Icon(
+                Icons.lock_outline_rounded,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              validator: (v) {
+                if (v == null || v.isEmpty) return 'Password is required';
+                if (v.length < 6) {
+                  return 'Password must be at least 6 characters';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: Checkbox(
+                    value: staySignedIn,
+                    onChanged: onStaySignedInChanged,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  'Stay signed in for 30 days',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, state) {
+                return FilledButton(
+                  onPressed: state is AuthLoading ? null : onSubmit,
+                  child: state is AuthLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Sign In'),
+                            SizedBox(width: 8),
+                            Icon(Icons.arrow_forward_rounded, size: 18),
+                          ],
+                        ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Footer extends StatelessWidget {
+  const _Footer();
+
+  @override
+  Widget build(BuildContext context) {
+    final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          letterSpacing: 0.6,
+        );
+
+    return Column(
+      children: [
+        Text('ENTERPRISE EDITION V4.2.0', style: labelStyle),
+        const SizedBox(height: 4),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                textStyle: labelStyle,
+              ),
+              child: const Text('Privacy Policy'),
+            ),
+            Text('•', style: labelStyle),
+            TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                textStyle: labelStyle,
+              ),
+              child: const Text('Terms of Service'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
