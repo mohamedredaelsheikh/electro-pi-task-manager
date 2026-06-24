@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 
 class AppLogo extends StatelessWidget {
-  const AppLogo({super.key});
+  final double size;
+  const AppLogo({super.key, this.size = 64});
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 64,
-          height: 64,
+          width: size,
+          height: size,
           decoration: BoxDecoration(
             color: const Color(0xFF6C5CE7),
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(size * 15 / 64),
           ),
           child: const CustomPaint(painter: _LogoPainter()),
         ),

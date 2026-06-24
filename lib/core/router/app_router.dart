@@ -10,6 +10,7 @@ import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/projects/presentation/cubit/projects_cubit.dart';
 import '../../features/projects/presentation/pages/projects_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
+import '../../features/splash/presentation/pages/splash_page.dart';
 import '../../features/tasks/presentation/cubit/tasks_cubit.dart';
 import '../../features/tasks/presentation/pages/project_details_page.dart';
 import '../di/injection.dart';
@@ -17,6 +18,7 @@ import '../widgets/main_shell.dart';
 import 'go_router_refresh_stream.dart';
 
 abstract class AppRoutes {
+  static const splash = '/splash';
   static const login = '/login';
   static const register = '/register';
   static const projects = '/projects';
@@ -28,9 +30,11 @@ abstract class AppRoutes {
 }
 
 final appRouter = GoRouter(
-  initialLocation: AppRoutes.login,
+  initialLocation: AppRoutes.splash,
   refreshListenable: GoRouterRefreshStream(sl<AuthCubit>().stream),
   redirect: (context, state) {
+    if (state.matchedLocation == AppRoutes.splash) return null;
+
     final authState = context.read<AuthCubit>().state;
     final isOnAuthRoute = state.matchedLocation == AppRoutes.login ||
         state.matchedLocation == AppRoutes.register;
@@ -44,6 +48,10 @@ final appRouter = GoRouter(
     return null;
   },
   routes: [
+    GoRoute(
+      path: AppRoutes.splash,
+      builder: (_, _) => const SplashPage(),
+    ),
     GoRoute(
       path: AppRoutes.login,
       builder: (_, _) => const LoginPage(),
