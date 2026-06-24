@@ -40,31 +40,31 @@ class _AuthTextFieldState extends State<AuthTextField> {
           widget.label.toUpperCase(),
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.6,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.8,
               ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         TextFormField(
           controller: widget.controller,
           keyboardType: widget.keyboardType,
           textInputAction: widget.textInputAction,
           obscureText: widget.obscure && _obscured,
           validator: widget.validator,
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
           decoration: InputDecoration(
             hintText: widget.hint,
             prefixIcon: widget.prefixIcon,
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: colorScheme.primary, width: 2),
-            ),
             suffixIcon: widget.obscure
                 ? IconButton(
                     icon: Icon(
                       _obscured
                           ? Icons.visibility_off_outlined
                           : Icons.visibility_outlined,
-                      color: colorScheme.onSurfaceVariant,
                     ),
                     onPressed: () => setState(() => _obscured = !_obscured),
                   )

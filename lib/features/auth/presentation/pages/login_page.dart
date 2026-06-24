@@ -31,9 +31,9 @@ class _LoginPageState extends State<LoginPage> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<AuthCubit>().login(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-        );
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
   }
 
   @override
@@ -86,7 +86,9 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Text(
                         "Don't have an account?",
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Color(0xff6b7200),
+                        ),
                       ),
                       TextButton(
                         onPressed: () => context.push(AppRoutes.register),
@@ -106,7 +108,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
 
 class _LoginCard extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -144,16 +145,16 @@ class _LoginCard extends StatelessWidget {
             Text(
               'Welcome Back',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF191C1E),
-                  ),
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface,
+              ),
             ),
             const SizedBox(height: 6),
             Text(
               'Please enter your details to continue.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 24),
             AuthTextField(
@@ -248,9 +249,9 @@ class _Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-          letterSpacing: 0.6,
-        );
+      color: Theme.of(context).colorScheme.onSurfaceVariant,
+      letterSpacing: 0.6,
+    );
 
     return Column(
       children: [

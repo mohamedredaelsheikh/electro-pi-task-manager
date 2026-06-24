@@ -163,7 +163,7 @@ class _RegisterCard extends StatelessWidget {
               'Create Account',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF191C1E),
+                    color: colorScheme.onSurface,
                   ),
             ),
             const SizedBox(height: 6),
