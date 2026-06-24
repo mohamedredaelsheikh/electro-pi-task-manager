@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
-  <title>TaskFlow Logo</title>
-  <rect width="400" height="400" fill="#0f0f1a"/>
-  <rect x="80" y="80" width="240" height="240" rx="56" fill="#6c5ce7"/>
-  <line x1="128" y1="168" x2="196" y2="168" stroke="white" stroke-width="16" stroke-linecap="round"/>
-  <line x1="128" y1="210" x2="208" y2="210" stroke="white" stroke-width="16" stroke-linecap="round"/>
-  <line x1="128" y1="252" x2="172" y2="252" stroke="white" stroke-width="16" stroke-linecap="round"/>
-  <path d="M208 178 L232 218 L290 142" fill="none" stroke="white" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>

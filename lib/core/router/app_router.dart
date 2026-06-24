@@ -60,27 +60,33 @@ final appRouter = GoRouter(
       path: AppRoutes.register,
       builder: (_, _) => const RegisterPage(),
     ),
-    ShellRoute(
-      builder: (_, _, child) => MainShell(child: child),
-      routes: [
-        GoRoute(
-          path: AppRoutes.projects,
-          builder: (_, _) => BlocProvider(
-            create: (_) => sl<ProjectsCubit>()..loadProjects(),
-            child: const ProjectsPage(),
+    StatefulShellRoute.indexedStack(
+      builder: (_, _, shell) => MainShell(navigationShell: shell),
+      branches: [
+        StatefulShellBranch(routes: [
+          GoRoute(
+            path: AppRoutes.projects,
+            builder: (_, _) => BlocProvider(
+              create: (_) => sl<ProjectsCubit>()..loadProjects(),
+              child: const ProjectsPage(),
+            ),
           ),
-        ),
-        GoRoute(
-          path: AppRoutes.profile,
-          builder: (_, _) => BlocProvider(
-            create: (_) => sl<ProfileCubit>()..loadProfile(),
-            child: const ProfilePage(),
+        ]),
+        StatefulShellBranch(routes: [
+          GoRoute(
+            path: AppRoutes.profile,
+            builder: (_, _) => BlocProvider(
+              create: (_) => sl<ProfileCubit>()..loadProfile(),
+              child: const ProfilePage(),
+            ),
           ),
-        ),
-        GoRoute(
-          path: AppRoutes.settings,
-          builder: (_, _) => const SettingsPage(),
-        ),
+        ]),
+        StatefulShellBranch(routes: [
+          GoRoute(
+            path: AppRoutes.settings,
+            builder: (_, _) => const SettingsPage(),
+          ),
+        ]),
       ],
     ),
     // Project details — full-screen, outside the shell
