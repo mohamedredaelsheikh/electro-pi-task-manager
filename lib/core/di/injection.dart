@@ -57,14 +57,15 @@ Future<void> configureDependencies() async {
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
   sl.registerLazySingleton(() => CheckAuthUseCase(sl()));
 
-  // Auth — presentation
-  sl.registerFactory(
+  // Auth — presentation (singleton so the router and widget tree share one instance)
+  sl.registerLazySingleton(
     () => AuthCubit(
       login: sl(),
       register: sl(),
       logout: sl(),
       checkAuth: sl(),
     ),
+    dispose: (cubit) => cubit.close(),
   );
 
   // Profile — data

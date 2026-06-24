@@ -13,6 +13,7 @@ import '../../features/tasks/presentation/cubit/tasks_cubit.dart';
 import '../../features/tasks/presentation/pages/project_details_page.dart';
 import '../di/injection.dart';
 import '../widgets/main_shell.dart';
+import 'go_router_refresh_stream.dart';
 
 abstract class AppRoutes {
   static const login = '/login';
@@ -26,6 +27,7 @@ abstract class AppRoutes {
 
 final appRouter = GoRouter(
   initialLocation: AppRoutes.login,
+  refreshListenable: GoRouterRefreshStream(sl<AuthCubit>().stream),
   redirect: (context, state) {
     final authState = context.read<AuthCubit>().state;
     final isOnAuthRoute = state.matchedLocation == AppRoutes.login ||
@@ -34,9 +36,7 @@ final appRouter = GoRouter(
     if (authState is AuthAuthenticated && isOnAuthRoute) {
       return AppRoutes.projects;
     }
-    if (authState is! AuthAuthenticated &&
-        authState is! AuthInitial &&
-        !isOnAuthRoute) {
+    if (authState is! AuthAuthenticated && !isOnAuthRoute) {
       return AppRoutes.login;
     }
     return null;
@@ -44,17 +44,11 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(
       path: AppRoutes.login,
-      builder: (_, _) => BlocProvider(
-        create: (_) => sl<AuthCubit>()..checkSession(),
-        child: const LoginPage(),
-      ),
+      builder: (_, _) => const LoginPage(),
     ),
     GoRoute(
       path: AppRoutes.register,
-      builder: (_, _) => BlocProvider.value(
-        value: sl<AuthCubit>(),
-        child: const RegisterPage(),
-      ),
+      builder: (_, _) => const RegisterPage(),
     ),
     ShellRoute(
       builder: (_, _, child) => MainShell(child: child),

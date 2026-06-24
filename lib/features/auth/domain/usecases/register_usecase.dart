@@ -1,3 +1,4 @@
+import '../../../../core/error/failures.dart';
 import '../../../../core/network/api_result.dart';
 import '../entities/user.dart';
 import '../repositories/auth_repository.dart';
@@ -10,6 +11,10 @@ class RegisterUseCase {
     required String name,
     required String email,
     required String password,
-  }) =>
-      _repository.register(name: name, email: email, password: password);
+  }) async {
+    if (name.trim().isEmpty || email.trim().isEmpty || password.trim().isEmpty) {
+      return const ApiFailure(AuthFailure('All fields are required.'));
+    }
+    return _repository.register(name: name, email: email, password: password);
+  }
 }

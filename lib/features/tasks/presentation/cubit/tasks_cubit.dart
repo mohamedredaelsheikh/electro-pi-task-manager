@@ -36,21 +36,28 @@ class TasksCubit extends Cubit<TasksState> {
 
   Future<void> markAsDone(int taskId) async {
     if (state case TasksLoaded(:final tasks)) {
+      if (taskId < 0) {
+        // Locally-created task — update state directly without an API call.
+        emit(TasksLoaded(
+          tasks.map((t) => t.id == taskId ? t.copyWith(status: TaskStatus.done) : t).toList(),
+        ));
+        return;
+      }
       final result = await _updateStatus(taskId, TaskStatus.done);
       if (result case ApiSuccess()) {
-        final updated = tasks
-            .map((t) => t.id == taskId ? t.copyWith(status: TaskStatus.done) : t)
-            .toList();
-        emit(TasksLoaded(updated));
+        emit(TasksLoaded(
+          tasks.map((t) => t.id == taskId ? t.copyWith(status: TaskStatus.done) : t).toList(),
+        ));
       }
     }
   }
 
   Future<void> addTask(String title) async {
-    if (title.trim().isEmpty) return;
-    final result = await _createTask(title: title.trim());
+    final trimmed = title.trim();
+    if (trimmed.isEmpty) return;
+    final result = await _createTask(title: trimmed);
+    if (isClosed) return;
     if (result case ApiSuccess(:final data)) {
-      // JSONPlaceholder returns id 201 for every POST — prepend locally.
       if (state case TasksLoaded(:final tasks)) {
         emit(TasksLoaded([data, ...tasks]));
       }
