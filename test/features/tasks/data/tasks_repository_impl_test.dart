@@ -20,16 +20,16 @@ void main() {
     repo = TasksRepositoryImpl(mockRemote, mockStorage);
   });
 
-  const _t = TaskModel(id: 11, userId: 1, title: 'T11', status: TaskStatus.pending, priority: TaskPriority.low);
-  const _t2 = TaskModel(id: 22, userId: 1, title: 'T22', status: TaskStatus.pending, priority: TaskPriority.high);
+  const taskModel = TaskModel(id: 11, userId: 1, title: 'T11', status: TaskStatus.pending, priority: TaskPriority.low);
+  const taskModel2 = TaskModel(id: 22, userId: 1, title: 'T22', status: TaskStatus.pending, priority: TaskPriority.high);
 
   group('getTasksByProject', () {
     test('filters todos by id % 10 == projectId % 10', () async {
       when(() => mockStorage.getUserId()).thenReturn(1);
       when(() => mockRemote.getUserTodos(1))
-          .thenAnswer((_) async => ApiSuccess([_t, _t2]));
+          .thenAnswer((_) async => ApiSuccess([taskModel, taskModel2]));
 
-      // projectId=1 → filter: id%10==1 → only _t (11%10=1)
+      // projectId=1 → filter: id%10==1 → only taskModel (11%10=1)
       final result = await repo.getTasksByProject(1);
 
       expect(result.isSuccess, isTrue);
@@ -81,7 +81,7 @@ void main() {
     test('returns result from remote', () async {
       when(() => mockStorage.getUserId()).thenReturn(1);
       when(() => mockRemote.createTodo(userId: 1, title: 'New'))
-          .thenAnswer((_) async => const ApiSuccess(_t));
+          .thenAnswer((_) async => const ApiSuccess(taskModel));
 
       final result = await repo.createTask(title: 'New');
       expect(result.isSuccess, isTrue);

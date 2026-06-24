@@ -8,7 +8,6 @@ import 'package:electro_pi_task_manager/features/auth/presentation/cubit/auth_st
 import 'package:electro_pi_task_manager/features/auth/presentation/pages/login_page.dart';
 
 import '../../../helpers/mocks.dart';
-import '../../../helpers/test_data.dart';
 
 Widget _buildApp(MockAuthCubit cubit) {
   return BlocProvider<AuthCubit>.value(
@@ -42,34 +41,44 @@ void main() {
     expect(find.text('Email is required'), findsOneWidget);
   });
 
-  testWidgets('shows validation error when password is too short',
-      (tester) async {
+  testWidgets('shows validation error when password is too short', (
+    tester,
+  ) async {
     await tester.pumpWidget(_buildApp(mockCubit));
     await tester.enterText(
-        find.widgetWithText(TextFormField, 'Email'), 'a@b.com');
+      find.widgetWithText(TextFormField, 'Email'),
+      'a@b.com',
+    );
     await tester.enterText(
-        find.widgetWithText(TextFormField, 'Password'), 'abc');
+      find.widgetWithText(TextFormField, 'Password'),
+      'abc',
+    );
     await tester.tap(find.widgetWithText(FilledButton, 'Sign In'));
     await tester.pump();
     expect(find.text('Password must be at least 6 characters'), findsOneWidget);
   });
 
   testWidgets('calls AuthCubit.login on valid submit', (tester) async {
-    when(() => mockCubit.login(
-          email: any(named: 'email'),
-          password: any(named: 'password'),
-        )).thenAnswer((_) async {});
+    when(
+      () => mockCubit.login(
+        email: any(named: 'email'),
+        password: any(named: 'password'),
+      ),
+    ).thenAnswer((_) async {});
     await tester.pumpWidget(_buildApp(mockCubit));
     await tester.enterText(
-        find.widgetWithText(TextFormField, 'Email'), 'john@example.com');
+      find.widgetWithText(TextFormField, 'Email'),
+      'john@example.com',
+    );
     await tester.enterText(
-        find.widgetWithText(TextFormField, 'Password'), 'password123');
+      find.widgetWithText(TextFormField, 'Password'),
+      'password123',
+    );
     await tester.tap(find.widgetWithText(FilledButton, 'Sign In'));
     await tester.pump();
-    verify(() => mockCubit.login(
-          email: 'john@example.com',
-          password: 'password123',
-        )).called(1);
+    verify(
+      () => mockCubit.login(email: 'john@example.com', password: 'password123'),
+    ).called(1);
   });
 
   testWidgets('disables submit button when AuthLoading', (tester) async {
