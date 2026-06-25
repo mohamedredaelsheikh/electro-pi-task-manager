@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/app_strings.dart';
+
 class AppLogo extends StatelessWidget {
   final double size;
   const AppLogo({super.key, this.size = 64});
@@ -20,7 +22,7 @@ class AppLogo extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          'Task Manager',
+          AppStrings.appName,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary,

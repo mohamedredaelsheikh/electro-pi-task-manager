@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
@@ -22,7 +23,7 @@ class ProjectsPage extends StatelessWidget {
         scrolledUnderElevation: 1,
         surfaceTintColor: Colors.transparent,
         shadowColor: const Color(0x14191C1E),
-        title: const AppBarLogo(title: 'Projects'),
+        title: const AppBarLogo(title: AppStrings.projects),
       ),
       body: BlocBuilder<ProjectsCubit, ProjectsState>(
         builder: (context, state) => switch (state) {
@@ -31,8 +32,8 @@ class ProjectsPage extends StatelessWidget {
           ProjectsLoaded(:final projects) when projects.isEmpty =>
             EmptyStateWidget(
               icon: Icons.folder_open_rounded,
-              title: 'No projects yet',
-              subtitle: 'Your projects will appear here.',
+              title: AppStrings.noProjects,
+              subtitle: AppStrings.noProjectsSubtitle,
             ),
           ProjectsLoaded(:final projects) => RefreshIndicator(
             onRefresh: () => context.read<ProjectsCubit>().loadProjects(),

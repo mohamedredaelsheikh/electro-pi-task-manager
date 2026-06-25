@@ -28,6 +28,11 @@ import '../../features/tasks/domain/usecases/create_task_usecase.dart';
 import '../../features/tasks/domain/usecases/get_tasks_usecase.dart';
 import '../../features/tasks/domain/usecases/update_task_status_usecase.dart';
 import '../../features/tasks/presentation/cubit/tasks_cubit.dart';
+import '../../features/settings/data/repositories/settings_repository_impl.dart';
+import '../../features/settings/domain/repositories/settings_repository.dart';
+import '../../features/settings/domain/usecases/get_theme_mode_usecase.dart';
+import '../../features/settings/domain/usecases/set_theme_mode_usecase.dart';
+import '../../features/settings/presentation/cubit/settings_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -114,5 +119,20 @@ Future<void> configureDependencies() async {
       updateStatus: sl(),
       createTask: sl(),
     ),
+  );
+
+  // Settings — data
+  sl.registerLazySingleton<SettingsRepository>(
+    () => SettingsRepositoryImpl(sl()),
+  );
+
+  // Settings — domain
+  sl.registerLazySingleton(() => GetThemeModeUseCase(sl()));
+  sl.registerLazySingleton(() => SetThemeModeUseCase(sl()));
+
+  // Settings — presentation (singleton so theme state is shared app-wide)
+  sl.registerLazySingleton(
+    () => SettingsCubit(getThemeMode: sl(), setThemeMode: sl()),
+    dispose: (cubit) => cubit.close(),
   );
 }

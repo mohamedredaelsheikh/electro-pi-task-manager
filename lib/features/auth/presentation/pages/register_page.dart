@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../cubit/auth_cubit.dart';
@@ -34,9 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (!_formKey.currentState!.validate()) return;
     if (!_termsAccepted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please accept the Terms of Service and Privacy Policy'),
-        ),
+        const SnackBar(content: Text(AppStrings.termsRequired)),
       );
       return;
     }
@@ -83,7 +82,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   const AppLogo(),
                   const SizedBox(height: 8),
                   Text(
-                    'Enterprise Minimalism for High-Output Teams',
+                    AppStrings.registerTagline,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -160,50 +159,48 @@ class _RegisterCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Create Account',
+              AppStrings.createAccount,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
                   ),
             ),
             const SizedBox(height: 6),
-            Text(
-              'Join the workspace to start organizing.',
-              style: bodyStyle,
-            ),
+            Text(AppStrings.registerSubtitle, style: bodyStyle),
             const SizedBox(height: 24),
             AuthTextField(
               controller: nameController,
-              label: 'Full Name',
-              hint: 'John Doe',
+              label: AppStrings.fullName,
+              hint: AppStrings.fullNameHint,
               keyboardType: TextInputType.name,
               prefixIcon: Icon(
                 Icons.person_outline_rounded,
                 color: colorScheme.onSurfaceVariant,
               ),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Name is required' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? AppStrings.nameRequired
+                  : null,
             ),
             const SizedBox(height: 16),
             AuthTextField(
               controller: emailController,
-              label: 'Email Address',
-              hint: 'name@company.com',
+              label: AppStrings.emailAddress,
+              hint: AppStrings.emailHint,
               keyboardType: TextInputType.emailAddress,
               prefixIcon: Icon(
                 Icons.mail_outline_rounded,
                 color: colorScheme.onSurfaceVariant,
               ),
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Email is required';
-                if (!v.contains('@')) return 'Enter a valid email';
+                if (v == null || v.trim().isEmpty) return AppStrings.emailRequired;
+                if (!v.contains('@')) return AppStrings.emailInvalid;
                 return null;
               },
             ),
             const SizedBox(height: 16),
             AuthTextField(
               controller: passwordController,
-              label: 'Password',
+              label: AppStrings.password,
               obscure: true,
               textInputAction: TextInputAction.done,
               prefixIcon: Icon(
@@ -211,10 +208,10 @@ class _RegisterCard extends StatelessWidget {
                 color: colorScheme.onSurfaceVariant,
               ),
               validator: (v) {
-                if (v == null || v.isEmpty) return 'Password is required';
-                if (v.length < 8) return 'Password must be at least 8 characters';
+                if (v == null || v.isEmpty) return AppStrings.passwordRequired;
+                if (v.length < 8) return AppStrings.passwordMinLengthRegister;
                 if (!RegExp(r'[!@#$%^&*(),.?":{}|<>_\-]').hasMatch(v)) {
-                  return 'Password must contain a symbol';
+                  return AppStrings.passwordNoSymbol;
                 }
                 return null;
               },
@@ -223,7 +220,7 @@ class _RegisterCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 4),
               child: Text(
-                'Must be at least 8 characters with a symbol.',
+                AppStrings.passwordRegisterHint,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
@@ -250,11 +247,13 @@ class _RegisterCard extends StatelessWidget {
                     TextSpan(
                       style: bodyStyle,
                       children: [
-                        const TextSpan(text: 'I agree to the '),
-                        TextSpan(text: 'Terms of Service', style: linkStyle),
-                        const TextSpan(text: ' and '),
-                        TextSpan(text: 'Privacy Policy', style: linkStyle),
-                        const TextSpan(text: '.'),
+                        const TextSpan(text: AppStrings.termsPrefix),
+                        TextSpan(
+                            text: AppStrings.termsOfService, style: linkStyle),
+                        const TextSpan(text: AppStrings.termsAnd),
+                        TextSpan(
+                            text: AppStrings.privacyPolicy, style: linkStyle),
+                        const TextSpan(text: AppStrings.termsSuffix),
                       ],
                     ),
                   ),
@@ -278,7 +277,7 @@ class _RegisterCard extends StatelessWidget {
                       : const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('Sign Up'),
+                            Text(AppStrings.signUp),
                             SizedBox(width: 8),
                             Icon(Icons.arrow_forward_rounded, size: 18),
                           ],
@@ -293,11 +292,11 @@ class _RegisterCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Already have an account?', style: bodyStyle),
+                Text(AppStrings.alreadyHaveAccount, style: bodyStyle),
                 TextButton(
                   onPressed: onSignIn,
                   child: const Text(
-                    'Sign In',
+                    AppStrings.signIn,
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -322,11 +321,11 @@ class _RegisterFooter extends StatelessWidget {
 
     return Column(
       children: [
-        Text('TASK MANAGER: ENTERPRISE EDITION', style: labelStyle),
+        Text(AppStrings.enterpriseEditionFull, style: labelStyle),
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: ['Projects', 'Tasks', 'Team', 'Settings']
+          children: [AppStrings.projects, AppStrings.tasks, 'Team', AppStrings.settings]
               .map(
                 (label) => Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),

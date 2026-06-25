@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/section_label.dart';
@@ -22,7 +23,7 @@ class ProfilePage extends StatelessWidget {
         scrolledUnderElevation: 1,
         surfaceTintColor: Colors.transparent,
         shadowColor: const Color(0x14191C1E),
-        title: const AppBarLogo(title: 'Profile'),
+        title: const AppBarLogo(title: AppStrings.profile),
       ),
       body: MultiBlocListener(
         listeners: [
@@ -36,14 +37,10 @@ class ProfilePage extends StatelessWidget {
         ],
         child: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) => switch (state) {
-            ProfileInitial() => const Center(
-                child: CircularProgressIndicator(),
-              ),
+            ProfileInitial() => const Center(child: CircularProgressIndicator()),
             ProfileError(:final message) => _ErrorBody(message: message),
-            ProfileLoaded(:final user) => _ProfileBody(
-                name: user.name,
-                email: user.email,
-              ),
+            ProfileLoaded(:final user) =>
+              _ProfileBody(name: user.name, email: user.email),
           },
         ),
       ),
@@ -73,13 +70,13 @@ class _ProfileBody extends StatelessWidget {
         const SizedBox(height: 32),
         _AvatarHero(initials: _initials, name: name, email: email),
         const SizedBox(height: 28),
-        SectionLabel('ACCOUNT DETAILS'),
+        const SectionLabel(AppStrings.accountDetails),
         const SizedBox(height: 8),
         _InfoCard(name: name, email: email),
         const SizedBox(height: 20),
-        SectionLabel('SESSION'),
+        const SectionLabel(AppStrings.session),
         const SizedBox(height: 8),
-        _SignOutCard(),
+        const _SignOutCard(),
         const SizedBox(height: 40),
       ],
     );
@@ -99,13 +96,14 @@ class _AvatarHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         Container(
           width: 88,
           height: 88,
-          decoration: const BoxDecoration(
-            color: Color(0xFF4F46E5),
+          decoration: BoxDecoration(
+            color: colorScheme.primary,
             shape: BoxShape.circle,
           ),
           child: Center(
@@ -126,7 +124,7 @@ class _AvatarHero extends StatelessWidget {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
-            color: Theme.of(context).colorScheme.onSurface,
+            color: colorScheme.onSurface,
             letterSpacing: -0.2,
           ),
         ),
@@ -135,7 +133,7 @@ class _AvatarHero extends StatelessWidget {
           email,
           style: TextStyle(
             fontSize: 14,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: colorScheme.onSurfaceVariant,
             height: 1.43,
           ),
         ),
@@ -143,7 +141,6 @@ class _AvatarHero extends StatelessWidget {
     );
   }
 }
-
 
 class _InfoCard extends StatelessWidget {
   final String name;
@@ -163,13 +160,13 @@ class _InfoCard extends StatelessWidget {
         children: [
           _InfoRow(
             icon: Icons.person_outline_rounded,
-            label: 'FULL NAME',
+            label: AppStrings.fullNameLabel,
             value: name,
           ),
           const Divider(height: 1, color: Color(0xFFE0E3E5), indent: 68),
           _InfoRow(
             icon: Icons.mail_outline_rounded,
-            label: 'EMAIL ADDRESS',
+            label: AppStrings.emailLabel,
             value: email,
           ),
         ],
@@ -275,7 +272,7 @@ class _SignOutCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 const Expanded(
                   child: Text(
-                    'Sign Out',
+                    AppStrings.signOut,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -309,18 +306,18 @@ class _ErrorBody extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline_rounded,
               size: 56,
-              color: Color(0xFFBA1A1A),
+              color: Theme.of(context).colorScheme.error,
             ),
             const SizedBox(height: 16),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: Color(0xFF464555),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ],

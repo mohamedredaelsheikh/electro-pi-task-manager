@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../cubit/auth_cubit.dart';
@@ -31,9 +32,9 @@ class _LoginPageState extends State<LoginPage> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<AuthCubit>().login(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-    );
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
   }
 
   @override
@@ -85,14 +86,12 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Don't have an account?",
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Color(0xff6b7200),
-                        ),
+                        AppStrings.noAccount,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       TextButton(
                         onPressed: () => context.push(AppRoutes.register),
-                        child: const Text('Sign Up'),
+                        child: const Text(AppStrings.signUp),
                       ),
                     ],
                   ),
@@ -143,39 +142,39 @@ class _LoginCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Welcome Back',
+              AppStrings.welcomeBack,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface,
-              ),
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
             ),
             const SizedBox(height: 6),
             Text(
-              'Please enter your details to continue.',
+              AppStrings.loginSubtitle,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
+                    color: colorScheme.onSurfaceVariant,
+                  ),
             ),
             const SizedBox(height: 24),
             AuthTextField(
               controller: emailController,
-              label: 'Email Address',
-              hint: 'name@company.com',
+              label: AppStrings.emailAddress,
+              hint: AppStrings.emailHint,
               keyboardType: TextInputType.emailAddress,
               prefixIcon: Icon(
                 Icons.mail_outline_rounded,
                 color: colorScheme.onSurfaceVariant,
               ),
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Email is required';
-                if (!v.contains('@')) return 'Enter a valid email';
+                if (v == null || v.trim().isEmpty) return AppStrings.emailRequired;
+                if (!v.contains('@')) return AppStrings.emailInvalid;
                 return null;
               },
             ),
             const SizedBox(height: 16),
             AuthTextField(
               controller: passwordController,
-              label: 'Password',
+              label: AppStrings.password,
               obscure: true,
               textInputAction: TextInputAction.done,
               prefixIcon: Icon(
@@ -183,10 +182,8 @@ class _LoginCard extends StatelessWidget {
                 color: colorScheme.onSurfaceVariant,
               ),
               validator: (v) {
-                if (v == null || v.isEmpty) return 'Password is required';
-                if (v.length < 6) {
-                  return 'Password must be at least 6 characters';
-                }
+                if (v == null || v.isEmpty) return AppStrings.passwordRequired;
+                if (v.length < 6) return AppStrings.passwordMinLength;
                 return null;
               },
             ),
@@ -206,7 +203,7 @@ class _LoginCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  'Stay signed in for 30 days',
+                  AppStrings.staySignedIn,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -228,7 +225,7 @@ class _LoginCard extends StatelessWidget {
                       : const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('Sign In'),
+                            Text(AppStrings.signIn),
                             SizedBox(width: 8),
                             Icon(Icons.arrow_forward_rounded, size: 18),
                           ],
@@ -249,13 +246,13 @@ class _Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: Theme.of(context).colorScheme.onSurfaceVariant,
-      letterSpacing: 0.6,
-    );
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          letterSpacing: 0.6,
+        );
 
     return Column(
       children: [
-        Text('ENTERPRISE EDITION V4.2.0', style: labelStyle),
+        Text(AppStrings.enterpriseEdition, style: labelStyle),
         const SizedBox(height: 4),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -268,7 +265,7 @@ class _Footer extends StatelessWidget {
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 textStyle: labelStyle,
               ),
-              child: const Text('Privacy Policy'),
+              child: const Text(AppStrings.privacyPolicy),
             ),
             Text('•', style: labelStyle),
             TextButton(
@@ -279,7 +276,7 @@ class _Footer extends StatelessWidget {
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 textStyle: labelStyle,
               ),
-              child: const Text('Terms of Service'),
+              child: const Text(AppStrings.termsOfService),
             ),
           ],
         ),
