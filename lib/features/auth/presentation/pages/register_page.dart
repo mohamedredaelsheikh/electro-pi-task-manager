@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
+import '../../../../core/extensions/localization.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../cubit/auth_cubit.dart';
@@ -35,7 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (!_formKey.currentState!.validate()) return;
     if (!_termsAccepted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.termsRequired)),
+        SnackBar(content: Text(context.getLang.termsRequired)),
       );
       return;
     }
@@ -82,10 +82,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   const AppLogo(),
                   const SizedBox(height: 8),
                   Text(
-                    AppStrings.registerTagline,
+                    context.getLang.registerTagline,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                   ),
                   const SizedBox(height: 20),
@@ -137,6 +138,7 @@ class _RegisterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final lang = context.getLang;
     final bodyStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
           color: colorScheme.onSurfaceVariant,
         );
@@ -159,48 +161,48 @@ class _RegisterCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppStrings.createAccount,
+              lang.createAccount,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
                   ),
             ),
             const SizedBox(height: 6),
-            Text(AppStrings.registerSubtitle, style: bodyStyle),
+            Text(lang.registerSubtitle, style: bodyStyle),
             const SizedBox(height: 24),
             AuthTextField(
               controller: nameController,
-              label: AppStrings.fullName,
-              hint: AppStrings.fullNameHint,
+              label: lang.fullName,
+              hint: lang.fullNameHint,
               keyboardType: TextInputType.name,
               prefixIcon: Icon(
                 Icons.person_outline_rounded,
                 color: colorScheme.onSurfaceVariant,
               ),
               validator: (v) => (v == null || v.trim().isEmpty)
-                  ? AppStrings.nameRequired
+                  ? lang.nameRequired
                   : null,
             ),
             const SizedBox(height: 16),
             AuthTextField(
               controller: emailController,
-              label: AppStrings.emailAddress,
-              hint: AppStrings.emailHint,
+              label: lang.emailAddress,
+              hint: lang.emailHint,
               keyboardType: TextInputType.emailAddress,
               prefixIcon: Icon(
                 Icons.mail_outline_rounded,
                 color: colorScheme.onSurfaceVariant,
               ),
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return AppStrings.emailRequired;
-                if (!v.contains('@')) return AppStrings.emailInvalid;
+                if (v == null || v.trim().isEmpty) return lang.emailRequired;
+                if (!v.contains('@')) return lang.emailInvalid;
                 return null;
               },
             ),
             const SizedBox(height: 16),
             AuthTextField(
               controller: passwordController,
-              label: AppStrings.password,
+              label: lang.password,
               obscure: true,
               textInputAction: TextInputAction.done,
               prefixIcon: Icon(
@@ -208,10 +210,10 @@ class _RegisterCard extends StatelessWidget {
                 color: colorScheme.onSurfaceVariant,
               ),
               validator: (v) {
-                if (v == null || v.isEmpty) return AppStrings.passwordRequired;
-                if (v.length < 8) return AppStrings.passwordMinLengthRegister;
+                if (v == null || v.isEmpty) return lang.passwordRequired;
+                if (v.length < 8) return lang.passwordMinLengthRegister;
                 if (!RegExp(r'[!@#$%^&*(),.?":{}|<>_\-]').hasMatch(v)) {
-                  return AppStrings.passwordNoSymbol;
+                  return lang.passwordNoSymbol;
                 }
                 return null;
               },
@@ -220,7 +222,7 @@ class _RegisterCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 4),
               child: Text(
-                AppStrings.passwordRegisterHint,
+                lang.passwordRegisterHint,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
@@ -247,13 +249,11 @@ class _RegisterCard extends StatelessWidget {
                     TextSpan(
                       style: bodyStyle,
                       children: [
-                        const TextSpan(text: AppStrings.termsPrefix),
-                        TextSpan(
-                            text: AppStrings.termsOfService, style: linkStyle),
-                        const TextSpan(text: AppStrings.termsAnd),
-                        TextSpan(
-                            text: AppStrings.privacyPolicy, style: linkStyle),
-                        const TextSpan(text: AppStrings.termsSuffix),
+                        TextSpan(text: lang.termsPrefix),
+                        TextSpan(text: lang.termsOfService, style: linkStyle),
+                        TextSpan(text: lang.termsAnd),
+                        TextSpan(text: lang.privacyPolicy, style: linkStyle),
+                        TextSpan(text: lang.termsSuffix),
                       ],
                     ),
                   ),
@@ -274,12 +274,12 @@ class _RegisterCard extends StatelessWidget {
                             color: Colors.white,
                           ),
                         )
-                      : const Row(
+                      : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(AppStrings.signUp),
-                            SizedBox(width: 8),
-                            Icon(Icons.arrow_forward_rounded, size: 18),
+                            Text(context.getLang.signUp),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.arrow_forward_rounded, size: 18),
                           ],
                         ),
                 );
@@ -292,12 +292,12 @@ class _RegisterCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(AppStrings.alreadyHaveAccount, style: bodyStyle),
+                Text(lang.alreadyHaveAccount, style: bodyStyle),
                 TextButton(
                   onPressed: onSignIn,
-                  child: const Text(
-                    AppStrings.signIn,
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                  child: Text(
+                    lang.signIn,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -314,6 +314,7 @@ class _RegisterFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.getLang;
     final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
           color: Theme.of(context).colorScheme.onSurfaceVariant,
           letterSpacing: 0.6,
@@ -321,11 +322,11 @@ class _RegisterFooter extends StatelessWidget {
 
     return Column(
       children: [
-        Text(AppStrings.enterpriseEditionFull, style: labelStyle),
+        Text(lang.enterpriseEditionFull, style: labelStyle),
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [AppStrings.projects, AppStrings.tasks, 'Team', AppStrings.settings]
+          children: [lang.projects, lang.tasks, 'Team', lang.settings]
               .map(
                 (label) => Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),

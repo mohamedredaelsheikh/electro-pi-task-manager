@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../constants/app_strings.dart';
+import '../extensions/localization.dart';
 
 class AppLogo extends StatelessWidget {
   final double size;
@@ -22,7 +22,7 @@ class AppLogo extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          AppStrings.appName,
+          context.getLang.appName,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary,
@@ -70,8 +70,6 @@ class AppBarLogo extends StatelessWidget {
 class _LogoPainter extends CustomPainter {
   const _LogoPainter();
 
-  // All coordinates normalised against the SVG's 240×240 inner icon rect
-  // (original elements are on a 400×400 canvas with the rect starting at (80,80)).
   static const double _d = 240;
 
   @override

@@ -1,0 +1,194 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Arabic (`ar`).
+class SAr extends S {
+  SAr([String locale = 'ar']) : super(locale);
+
+  @override
+  String get appName => 'مدير المهام';
+
+  @override
+  String get welcomeBack => 'مرحباً بعودتك';
+
+  @override
+  String get loginSubtitle => 'الرجاء إدخال تفاصيلك للمتابعة.';
+
+  @override
+  String get emailAddress => 'عنوان البريد الإلكتروني';
+
+  @override
+  String get emailHint => 'name@company.com';
+
+  @override
+  String get password => 'كلمة المرور';
+
+  @override
+  String get staySignedIn => 'ابقَ مسجلاً لمدة 30 يوماً';
+
+  @override
+  String get signIn => 'تسجيل الدخول';
+
+  @override
+  String get noAccount => 'ليس لديك حساب؟';
+
+  @override
+  String get signUp => 'إنشاء حساب';
+
+  @override
+  String get enterpriseEdition => 'الإصدار المؤسسي V4.2.0';
+
+  @override
+  String get privacyPolicy => 'سياسة الخصوصية';
+
+  @override
+  String get termsOfService => 'شروط الخدمة';
+
+  @override
+  String get createAccount => 'إنشاء حساب';
+
+  @override
+  String get registerSubtitle => 'انضم إلى مساحة العمل لبدء التنظيم.';
+
+  @override
+  String get registerTagline => 'الحد الأدنى المؤسسي لفرق عالية الإنتاج';
+
+  @override
+  String get fullName => 'الاسم الكامل';
+
+  @override
+  String get fullNameHint => 'محمد أحمد';
+
+  @override
+  String get passwordRegisterHint => 'يجب أن يكون 8 أحرف على الأقل مع رمز.';
+
+  @override
+  String get termsPrefix => 'أوافق على ';
+
+  @override
+  String get termsAnd => ' و ';
+
+  @override
+  String get termsSuffix => '.';
+
+  @override
+  String get alreadyHaveAccount => 'هل لديك حساب بالفعل؟';
+
+  @override
+  String get enterpriseEditionFull => 'مدير المهام: الإصدار المؤسسي';
+
+  @override
+  String get emailRequired => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get emailInvalid => 'أدخل بريداً إلكترونياً صالحاً';
+
+  @override
+  String get passwordRequired => 'كلمة المرور مطلوبة';
+
+  @override
+  String get passwordMinLength => 'يجب أن تكون كلمة المرور 6 أحرف على الأقل';
+
+  @override
+  String get nameRequired => 'الاسم مطلوب';
+
+  @override
+  String get passwordMinLengthRegister =>
+      'يجب أن تكون كلمة المرور 8 أحرف على الأقل';
+
+  @override
+  String get passwordNoSymbol => 'يجب أن تحتوي كلمة المرور على رمز';
+
+  @override
+  String get termsRequired => 'الرجاء قبول شروط الخدمة وسياسة الخصوصية';
+
+  @override
+  String get projects => 'المشاريع';
+
+  @override
+  String get noProjects => 'لا توجد مشاريع بعد';
+
+  @override
+  String get noProjectsSubtitle => 'ستظهر مشاريعك هنا.';
+
+  @override
+  String get profile => 'الملف الشخصي';
+
+  @override
+  String get accountDetails => 'تفاصيل الحساب';
+
+  @override
+  String get fullNameLabel => 'الاسم الكامل';
+
+  @override
+  String get emailLabel => 'عنوان البريد الإلكتروني';
+
+  @override
+  String get session => 'الجلسة';
+
+  @override
+  String get signOut => 'تسجيل الخروج';
+
+  @override
+  String get settings => 'الإعدادات';
+
+  @override
+  String get preferences => 'التفضيلات';
+
+  @override
+  String get notifications => 'الإشعارات';
+
+  @override
+  String get notificationsSubtitle => 'تنبيهات المهام داخل التطبيق';
+
+  @override
+  String get appearance => 'المظهر';
+
+  @override
+  String get tasks => 'المهام';
+
+  @override
+  String get defaultPriority => 'الأولوية الافتراضية';
+
+  @override
+  String get defaultPriorityValue => 'متوسطة';
+
+  @override
+  String get sortTasksBy => 'ترتيب المهام حسب';
+
+  @override
+  String get sortTasksByValue => 'تاريخ الاستحقاق';
+
+  @override
+  String get about => 'حول';
+
+  @override
+  String get appVersion => 'إصدار التطبيق';
+
+  @override
+  String get appVersionValue => '1.0.0';
+
+  @override
+  String get privacyPolicyLabel => 'سياسة الخصوصية';
+
+  @override
+  String get termsOfServiceLabel => 'شروط الخدمة';
+
+  @override
+  String get themeLight => 'فاتح';
+
+  @override
+  String get themeDark => 'داكن';
+
+  @override
+  String get themeSystem => 'النظام';
+
+  @override
+  String get chooseAppearance => 'اختر المظهر';
+
+  @override
+  String get darkMode => 'الوضع الداكن';
+}

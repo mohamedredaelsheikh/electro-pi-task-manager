@@ -1,11 +1,13 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../domain/enums/app_locale.dart';
 import '../../domain/enums/app_theme_mode.dart';
 import '../../domain/repositories/settings_repository.dart';
 
 class SettingsRepositoryImpl implements SettingsRepository {
   final SharedPreferences _prefs;
   static const _themeKey = 'theme_mode';
+  static const _localeKey = 'locale';
 
   const SettingsRepositoryImpl(this._prefs);
 
@@ -27,5 +29,23 @@ class SettingsRepositoryImpl implements SettingsRepository {
       AppThemeMode.system => 'system',
     };
     return _prefs.setString(_themeKey, value);
+  }
+
+  @override
+  AppLocale getLocale() {
+    final value = _prefs.getString(_localeKey);
+    return switch (value) {
+      'ar' => AppLocale.ar,
+      _ => AppLocale.en,
+    };
+  }
+
+  @override
+  Future<void> setLocale(AppLocale locale) {
+    final value = switch (locale) {
+      AppLocale.en => 'en',
+      AppLocale.ar => 'ar',
+    };
+    return _prefs.setString(_localeKey, value);
   }
 }

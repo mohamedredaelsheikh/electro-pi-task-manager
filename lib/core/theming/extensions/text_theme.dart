@@ -1,39 +1,70 @@
+import 'package:electro_pi_task_manager/core/theming/extensions/color_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Extension on [BuildContext] to provide easy access to text theme styles.
 extension TextThemeEx on BuildContext {
   /// Retrieves the [TextTheme] from the current [Theme].
   TextTheme get textTheme => Theme.of(this).textTheme;
 
-  /// (44/600)
-  TextStyle get displayLarge => textTheme.displayLarge!;
+  //display//////////////////////////////////////////////////////////////////////////////////////
+  TextStyle get k52W400DisplaySmall => textTheme.displaySmall!;
+  TextStyle get k52W700DisplayLarge => textTheme.displayLarge!;
 
-  ///(24/700)
-  TextStyle get headlineLarge => textTheme.headlineLarge!;
+  //title_regular//////////////////////////////////////////////////////////////////////////////////////
+  TextStyle get k14W400TitleRegularSmall => textTheme.titleSmall!;
+  TextStyle get k16W400TitleRegularMedium => textTheme.titleMedium!;
+  TextStyle get k20W400TitleRegularLarge => textTheme.titleLarge!;
 
-  ///heading8 (20/600)
-  TextStyle get headlineMedium => textTheme.headlineMedium!;
+  //title_bold//////////////////////////////////////////////////////////////////////////////////////
+  TextStyle get k24W700TitleBoldSmall => textTheme.headlineSmall!;
+  TextStyle get k30W700TitleBoldMedium => textTheme.headlineMedium!;
+  TextStyle get k38W700TitleBoldLarge => textTheme.headlineLarge!;
 
-  /// (16/600)
-  TextStyle get headlineSmall => textTheme.headlineSmall!;
+  //text_regular//////////////////////////////////////////////////////////////////////////////////////
+  ///tertiary, ls 0.28
+  TextStyle get k14W400TextRegularSmall => textTheme.labelSmall!;
 
-  ///Xtra-Large (18/600)
-  TextStyle get titleLarge => textTheme.titleLarge!;
+  /// outline,ls 0.32
+  TextStyle get k16W400TextRegularMedium => textTheme.labelMedium!;
+  TextStyle get k20W400TextRegularLarge => textTheme.labelLarge!;
 
-  ///large/Medium (16/500)
-  TextStyle get titleMedium => textTheme.titleMedium!;
+  //text_semibold//////////////////////////////////////////////////////////////////////////////////////
+  TextStyle get k14W600TextSemiboldSmall => textTheme.bodySmall!;
+  TextStyle get k16W600TextSemiboldMedium => textTheme.bodyMedium!;
+  TextStyle get k20W600TextSemiboldLarge => textTheme.bodyLarge!;
 
-  ///medium/bold (16/600)
-  TextStyle get bodyLarge => textTheme.bodyLarge!;
+  //text_bold//////////////////////////////////////////////////////////////////////////////////////
+  ///14,w 700, outline, 0.28
+  TextStyle get k14W700TextBoldSmall =>
+      textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w700);
 
-  ///medium/medium (14/500)
-  TextStyle get bodyMedium => textTheme.bodyMedium!;
+  ///16,w 700, outline, 0.32
+  TextStyle get k16W700TextBoldMedium => textTheme.bodyMedium!.copyWith(
+    fontWeight: FontWeight.w700,
+    color: onSurface,
+  );
 
-  ///medium regular (14/400)
-  TextStyle get bodySmall => textTheme.bodySmall!;
+  ///20,w 700, onSurface, 0.4
+  TextStyle get k20W700TextBoldLarge =>
+      textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w700);
 
-  ///(12/500)
-  TextStyle get labelMedium => textTheme.labelMedium!;
+  //caption//////////////////////////////////////////////////////////////////////////////////////
+  ///12,w 400, outline, 0.24, (12/16)
+  TextStyle get k12W400CaptionRegular => textTheme.labelSmall!.copyWith(
+    fontSize: 12.sp,
+    color: outline,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.24,
+    height: (16 / 12).sp,
+  );
 
-  TextStyle get labelSmall => textTheme.labelSmall!;
+  ///12,w 700, outline, 0.24, 12/16
+  TextStyle get k12W700CaptionBold => textTheme.labelSmall!.copyWith(
+    fontSize: 12.sp,
+    color: onSurface,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0.24,
+    height: (16 / 12).sp,
+  );
 }

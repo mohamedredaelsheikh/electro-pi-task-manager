@@ -34,6 +34,9 @@ extension ColorExtention on BuildContext {
   Color get onSecondaryContainer =>
       Theme.of(this).colorScheme.onSecondaryContainer;
 
+  /// disabled.
+  Color get secondaryFixed => Theme.of(this).colorScheme.secondaryFixed;
+
   // Tertiary colors
 
   /// Color for clickable text.
@@ -48,6 +51,9 @@ extension ColorExtention on BuildContext {
   /// Color for text/icons on tertiary containers.
   Color get onTertiaryContainer =>
       Theme.of(this).colorScheme.onTertiaryContainer;
+
+  Color get tertiaryFixed => Theme.of(this).colorScheme.tertiaryFixed;
+  Color get tertiaryFixedDim => Theme.of(this).colorScheme.tertiaryFixedDim;
 
   // Error colors
 
@@ -68,7 +74,7 @@ extension ColorExtention on BuildContext {
   /// Background color for surfaces.
   Color get surface => Theme.of(this).colorScheme.surface;
 
-  /// text color
+  /// text color 0xff1B1C22
   Color get onSurface => Theme.of(this).colorScheme.onSurface;
 
   /// Bright color for cards.
@@ -84,9 +90,16 @@ extension ColorExtention on BuildContext {
   /// Dim surface color.
   Color get surfaceDim => Theme.of(this).colorScheme.surfaceDim;
 
+  /// Dappled Button color
+  Color get surfaceContainer => Theme.of(this).colorScheme.surfaceContainer;
+
+  /// Text field fill color
+  Color get surfaceContainerLow =>
+      Theme.of(this).colorScheme.surfaceContainerLow;
+
   // Outline
 
-  /// hint text color
+  ///0xff737373 hint text color
   Color get outline => Theme.of(this).colorScheme.outline;
 
   /// text color 2
@@ -112,4 +125,7 @@ extension ColorExtention on BuildContext {
 
   /// Color for scrims.
   Color get scrim => Theme.of(this).colorScheme.scrim;
+
+  /// Color for
+  Color get primaryFixedDim => Theme.of(this).colorScheme.primaryFixedDim;
 }

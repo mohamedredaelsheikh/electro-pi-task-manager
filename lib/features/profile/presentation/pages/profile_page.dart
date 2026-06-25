@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
+import '../../../../core/extensions/localization.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/section_label.dart';
@@ -23,7 +23,7 @@ class ProfilePage extends StatelessWidget {
         scrolledUnderElevation: 1,
         surfaceTintColor: Colors.transparent,
         shadowColor: const Color(0x14191C1E),
-        title: const AppBarLogo(title: AppStrings.profile),
+        title: AppBarLogo(title: context.getLang.profile),
       ),
       body: MultiBlocListener(
         listeners: [
@@ -64,17 +64,18 @@ class _ProfileBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.getLang;
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       children: [
         const SizedBox(height: 32),
         _AvatarHero(initials: _initials, name: name, email: email),
         const SizedBox(height: 28),
-        const SectionLabel(AppStrings.accountDetails),
+        SectionLabel(lang.accountDetails),
         const SizedBox(height: 8),
         _InfoCard(name: name, email: email),
         const SizedBox(height: 20),
-        const SectionLabel(AppStrings.session),
+        SectionLabel(lang.session),
         const SizedBox(height: 8),
         const _SignOutCard(),
         const SizedBox(height: 40),
@@ -150,6 +151,7 @@ class _InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.getLang;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -160,13 +162,13 @@ class _InfoCard extends StatelessWidget {
         children: [
           _InfoRow(
             icon: Icons.person_outline_rounded,
-            label: AppStrings.fullNameLabel,
+            label: lang.fullNameLabel,
             value: name,
           ),
           const Divider(height: 1, color: Color(0xFFE0E3E5), indent: 68),
           _InfoRow(
             icon: Icons.mail_outline_rounded,
-            label: AppStrings.emailLabel,
+            label: lang.emailLabel,
             value: email,
           ),
         ],
@@ -270,10 +272,10 @@ class _SignOutCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    AppStrings.signOut,
-                    style: TextStyle(
+                    context.getLang.signOut,
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: Color(0xFFBA1A1A),

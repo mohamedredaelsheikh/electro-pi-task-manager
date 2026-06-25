@@ -30,7 +30,9 @@ import '../../features/tasks/domain/usecases/update_task_status_usecase.dart';
 import '../../features/tasks/presentation/cubit/tasks_cubit.dart';
 import '../../features/settings/data/repositories/settings_repository_impl.dart';
 import '../../features/settings/domain/repositories/settings_repository.dart';
+import '../../features/settings/domain/usecases/get_locale_usecase.dart';
 import '../../features/settings/domain/usecases/get_theme_mode_usecase.dart';
+import '../../features/settings/domain/usecases/set_locale_usecase.dart';
 import '../../features/settings/domain/usecases/set_theme_mode_usecase.dart';
 import '../../features/settings/presentation/cubit/settings_cubit.dart';
 
@@ -129,10 +131,17 @@ Future<void> configureDependencies() async {
   // Settings — domain
   sl.registerLazySingleton(() => GetThemeModeUseCase(sl()));
   sl.registerLazySingleton(() => SetThemeModeUseCase(sl()));
+  sl.registerLazySingleton(() => GetLocaleUseCase(sl()));
+  sl.registerLazySingleton(() => SetLocaleUseCase(sl()));
 
-  // Settings — presentation (singleton so theme state is shared app-wide)
+  // Settings — presentation (singleton so theme/locale state is shared app-wide)
   sl.registerLazySingleton(
-    () => SettingsCubit(getThemeMode: sl(), setThemeMode: sl()),
+    () => SettingsCubit(
+      getThemeMode: sl(),
+      setThemeMode: sl(),
+      getLocale: sl(),
+      setLocale: sl(),
+    ),
     dispose: (cubit) => cubit.close(),
   );
 }

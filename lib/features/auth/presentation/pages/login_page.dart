@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
+import '../../../../core/extensions/localization.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../cubit/auth_cubit.dart';
@@ -86,12 +86,12 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        AppStrings.noAccount,
+                        context.getLang.noAccount,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       TextButton(
                         onPressed: () => context.push(AppRoutes.register),
-                        child: const Text(AppStrings.signUp),
+                        child: Text(context.getLang.signUp),
                       ),
                     ],
                   ),
@@ -128,6 +128,7 @@ class _LoginCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final lang = context.getLang;
 
     return Container(
       decoration: BoxDecoration(
@@ -142,7 +143,7 @@ class _LoginCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppStrings.welcomeBack,
+              lang.welcomeBack,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
@@ -150,7 +151,7 @@ class _LoginCard extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              AppStrings.loginSubtitle,
+              lang.loginSubtitle,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),
@@ -158,23 +159,23 @@ class _LoginCard extends StatelessWidget {
             const SizedBox(height: 24),
             AuthTextField(
               controller: emailController,
-              label: AppStrings.emailAddress,
-              hint: AppStrings.emailHint,
+              label: lang.emailAddress,
+              hint: lang.emailHint,
               keyboardType: TextInputType.emailAddress,
               prefixIcon: Icon(
                 Icons.mail_outline_rounded,
                 color: colorScheme.onSurfaceVariant,
               ),
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return AppStrings.emailRequired;
-                if (!v.contains('@')) return AppStrings.emailInvalid;
+                if (v == null || v.trim().isEmpty) return lang.emailRequired;
+                if (!v.contains('@')) return lang.emailInvalid;
                 return null;
               },
             ),
             const SizedBox(height: 16),
             AuthTextField(
               controller: passwordController,
-              label: AppStrings.password,
+              label: lang.password,
               obscure: true,
               textInputAction: TextInputAction.done,
               prefixIcon: Icon(
@@ -182,8 +183,8 @@ class _LoginCard extends StatelessWidget {
                 color: colorScheme.onSurfaceVariant,
               ),
               validator: (v) {
-                if (v == null || v.isEmpty) return AppStrings.passwordRequired;
-                if (v.length < 6) return AppStrings.passwordMinLength;
+                if (v == null || v.isEmpty) return lang.passwordRequired;
+                if (v.length < 6) return lang.passwordMinLength;
                 return null;
               },
             ),
@@ -202,10 +203,8 @@ class _LoginCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Text(
-                  AppStrings.staySignedIn,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
+                Text(lang.staySignedIn,
+                    style: Theme.of(context).textTheme.bodyMedium),
               ],
             ),
             const SizedBox(height: 24),
@@ -222,12 +221,12 @@ class _LoginCard extends StatelessWidget {
                             color: Colors.white,
                           ),
                         )
-                      : const Row(
+                      : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(AppStrings.signIn),
-                            SizedBox(width: 8),
-                            Icon(Icons.arrow_forward_rounded, size: 18),
+                            Text(context.getLang.signIn),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.arrow_forward_rounded, size: 18),
                           ],
                         ),
                 );
@@ -245,6 +244,7 @@ class _Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.getLang;
     final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
           color: Theme.of(context).colorScheme.onSurfaceVariant,
           letterSpacing: 0.6,
@@ -252,7 +252,7 @@ class _Footer extends StatelessWidget {
 
     return Column(
       children: [
-        Text(AppStrings.enterpriseEdition, style: labelStyle),
+        Text(lang.enterpriseEdition, style: labelStyle),
         const SizedBox(height: 4),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -265,7 +265,7 @@ class _Footer extends StatelessWidget {
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 textStyle: labelStyle,
               ),
-              child: const Text(AppStrings.privacyPolicy),
+              child: Text(lang.privacyPolicy),
             ),
             Text('•', style: labelStyle),
             TextButton(
@@ -276,7 +276,7 @@ class _Footer extends StatelessWidget {
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 textStyle: labelStyle,
               ),
-              child: const Text(AppStrings.termsOfService),
+              child: Text(lang.termsOfService),
             ),
           ],
         ),

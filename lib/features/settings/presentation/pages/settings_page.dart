@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/constants/app_strings.dart';
+import '../../../../core/extensions/localization.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/section_label.dart';
 import '../../domain/enums/app_theme_mode.dart';
@@ -18,31 +18,12 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool _notificationsEnabled = true;
 
-  void _showThemePicker(BuildContext context, AppThemeMode current) {
-    final cubit = context.read<SettingsCubit>();
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => _ThemePickerSheet(
-        current: current,
-        onSelect: (mode) {
-          cubit.setThemeMode(mode);
-          Navigator.pop(context);
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final lang = context.getLang;
+    final cubit = context.read<SettingsCubit>();
     final themeMode = context.watch<SettingsCubit>().state.themeMode;
-    final themeName = switch (themeMode) {
-      AppThemeMode.light => AppStrings.themeLight,
-      AppThemeMode.dark => AppStrings.themeDark,
-      AppThemeMode.system => AppStrings.themeSystem,
-    };
+    final isDark = themeMode == AppThemeMode.dark;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F9FB),
@@ -51,20 +32,20 @@ class _SettingsPageState extends State<SettingsPage> {
         scrolledUnderElevation: 1,
         surfaceTintColor: Colors.transparent,
         shadowColor: const Color(0x14191C1E),
-        title: const AppBarLogo(title: AppStrings.settings),
+        title: AppBarLogo(title: lang.settings),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
           const SizedBox(height: 32),
-          const SectionLabel(AppStrings.preferences),
+          SectionLabel(lang.preferences),
           const SizedBox(height: 8),
           _SettingsCard(
             children: [
               _SettingRow(
                 icon: Icons.notifications_none_rounded,
-                label: AppStrings.notifications,
-                subtitle: AppStrings.notificationsSubtitle,
+                label: lang.notifications,
+                subtitle: lang.notificationsSubtitle,
                 trailing: Switch(
                   value: _notificationsEnabled,
                   onChanged: (v) => setState(() => _notificationsEnabled = v),
@@ -79,27 +60,34 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               const Divider(height: 1, color: Color(0xFFE0E3E5), indent: 68),
               _SettingRow(
-                icon: Icons.palette_outlined,
-                label: AppStrings.appearance,
-                subtitle: themeName,
-                onTap: () => _showThemePicker(context, themeMode),
-                trailing: Icon(
-                  Icons.chevron_right_rounded,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  size: 20,
+                icon: Icons.dark_mode_outlined,
+                label: lang.darkMode,
+                subtitle: isDark ? lang.themeDark : lang.themeLight,
+                trailing: Switch(
+                  value: isDark,
+                  onChanged: (v) => cubit.setThemeMode(
+                    v ? AppThemeMode.dark : AppThemeMode.system,
+                  ),
+                  thumbColor: WidgetStateProperty.all(Colors.white),
+                  trackColor: WidgetStateProperty.resolveWith(
+                    (states) => states.contains(WidgetState.selected)
+                        ? const Color(0xFF4F46E5)
+                        : const Color(0xFFC7C4D8),
+                  ),
+                  trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          const SectionLabel(AppStrings.tasks),
+          SectionLabel(lang.tasks),
           const SizedBox(height: 8),
           _SettingsCard(
             children: [
               _SettingRow(
                 icon: Icons.flag_outlined,
-                label: AppStrings.defaultPriority,
-                subtitle: AppStrings.defaultPriorityValue,
+                label: lang.defaultPriority,
+                subtitle: lang.defaultPriorityValue,
                 trailing: Icon(
                   Icons.chevron_right_rounded,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -109,8 +97,8 @@ class _SettingsPageState extends State<SettingsPage> {
               const Divider(height: 1, color: Color(0xFFE0E3E5), indent: 68),
               _SettingRow(
                 icon: Icons.sort_rounded,
-                label: AppStrings.sortTasksBy,
-                subtitle: AppStrings.sortTasksByValue,
+                label: lang.sortTasksBy,
+                subtitle: lang.sortTasksByValue,
                 trailing: Icon(
                   Icons.chevron_right_rounded,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -120,19 +108,19 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
           const SizedBox(height: 20),
-          const SectionLabel(AppStrings.about),
+          SectionLabel(lang.about),
           const SizedBox(height: 8),
           _SettingsCard(
             children: [
-              const _SettingRow(
+              _SettingRow(
                 icon: Icons.info_outline_rounded,
-                label: AppStrings.appVersion,
-                subtitle: AppStrings.appVersionValue,
+                label: lang.appVersion,
+                subtitle: lang.appVersionValue,
               ),
               const Divider(height: 1, color: Color(0xFFE0E3E5), indent: 68),
               _SettingRow(
                 icon: Icons.privacy_tip_outlined,
-                label: AppStrings.privacyPolicyLabel,
+                label: lang.privacyPolicyLabel,
                 trailing: Icon(
                   Icons.chevron_right_rounded,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -142,7 +130,7 @@ class _SettingsPageState extends State<SettingsPage> {
               const Divider(height: 1, color: Color(0xFFE0E3E5), indent: 68),
               _SettingRow(
                 icon: Icons.description_outlined,
-                label: AppStrings.termsOfServiceLabel,
+                label: lang.termsOfServiceLabel,
                 trailing: Icon(
                   Icons.chevron_right_rounded,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -256,65 +244,4 @@ class _SettingRow extends StatelessWidget {
       child: InkWell(onTap: onTap, child: content),
     );
   }
-}
-
-class _ThemePickerSheet extends StatelessWidget {
-  final AppThemeMode current;
-  final ValueChanged<AppThemeMode> onSelect;
-
-  const _ThemePickerSheet({required this.current, required this.onSelect});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 12),
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: colorScheme.outlineVariant,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            AppStrings.chooseAppearance,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-          const SizedBox(height: 8),
-          for (final mode in AppThemeMode.values)
-            RadioListTile<AppThemeMode>(
-              title: Text(_label(mode)),
-              secondary: Icon(_icon(mode), color: colorScheme.primary),
-              value: mode,
-              groupValue: current,
-              activeColor: colorScheme.primary,
-              onChanged: (v) {
-                if (v != null) onSelect(v);
-              },
-            ),
-          const SizedBox(height: 8),
-        ],
-      ),
-    );
-  }
-
-  String _label(AppThemeMode mode) => switch (mode) {
-        AppThemeMode.light => AppStrings.themeLight,
-        AppThemeMode.dark => AppStrings.themeDark,
-        AppThemeMode.system => AppStrings.themeSystem,
-      };
-
-  IconData _icon(AppThemeMode mode) => switch (mode) {
-        AppThemeMode.light => Icons.light_mode_outlined,
-        AppThemeMode.dark => Icons.dark_mode_outlined,
-        AppThemeMode.system => Icons.phone_android_outlined,
-      };
 }
