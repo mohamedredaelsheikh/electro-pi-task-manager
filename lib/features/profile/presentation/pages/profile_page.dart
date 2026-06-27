@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/localization.dart';
@@ -16,10 +17,10 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F9FB),
+      backgroundColor: colorScheme.surfaceContainerLow,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF7F9FB),
         scrolledUnderElevation: 1,
         surfaceTintColor: Colors.transparent,
         shadowColor: const Color(0x14191C1E),
@@ -66,19 +67,19 @@ class _ProfileBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final lang = context.getLang;
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       children: [
-        const SizedBox(height: 32),
+        SizedBox(height: 32.h),
         _AvatarHero(initials: _initials, name: name, email: email),
-        const SizedBox(height: 28),
+        SizedBox(height: 28.h),
         SectionLabel(lang.accountDetails),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         _InfoCard(name: name, email: email),
-        const SizedBox(height: 20),
+        SizedBox(height: 20.h),
         SectionLabel(lang.session),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         const _SignOutCard(),
-        const SizedBox(height: 40),
+        SizedBox(height: 40.h),
       ],
     );
   }
@@ -101,8 +102,8 @@ class _AvatarHero extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: 88,
-          height: 88,
+          width: 88.r,
+          height: 88.r,
           decoration: BoxDecoration(
             color: colorScheme.primary,
             shape: BoxShape.circle,
@@ -110,30 +111,30 @@ class _AvatarHero extends StatelessWidget {
           child: Center(
             child: Text(
               initials.isEmpty ? '?' : initials,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
-                fontSize: 30,
+                fontSize: 30.sp,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.5,
               ),
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Text(
           name,
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 20.sp,
             fontWeight: FontWeight.w700,
             color: colorScheme.onSurface,
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4.h),
         Text(
           email,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 14.sp,
             color: colorScheme.onSurfaceVariant,
             height: 1.43,
           ),
@@ -152,11 +153,12 @@ class _InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lang = context.getLang;
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE0E3E5)),
+        color: colorScheme.surfaceBright,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: Column(
         children: [
@@ -165,7 +167,7 @@ class _InfoCard extends StatelessWidget {
             label: lang.fullNameLabel,
             value: name,
           ),
-          const Divider(height: 1, color: Color(0xFFE0E3E5), indent: 68),
+          Divider(height: 1, color: colorScheme.outlineVariant, indent: 68.w),
           _InfoRow(
             icon: Icons.mail_outline_rounded,
             label: lang.emailLabel,
@@ -192,19 +194,19 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       child: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: 40.r,
+            height: 40.r,
             decoration: BoxDecoration(
               color: colorScheme.primary.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
             ),
-            child: Icon(icon, color: colorScheme.primary, size: 20),
+            child: Icon(icon, color: colorScheme.primary, size: 20.r),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,17 +214,17 @@ class _InfoRow extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 11.sp,
                     fontWeight: FontWeight.w600,
                     color: colorScheme.onSurfaceVariant,
                     letterSpacing: 0.6,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2.h),
                 Text(
                   value,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
                     color: colorScheme.onSurface,
                   ),
@@ -242,50 +244,51 @@ class _SignOutCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE0E3E5)),
+        color: colorScheme.surfaceBright,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () => context.read<AuthCubit>().logout(),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.r),
             child: Row(
               children: [
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: 40.r,
+                  height: 40.r,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFBA1A1A).withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(10),
+                    color: colorScheme.error.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.logout_rounded,
-                    color: Color(0xFFBA1A1A),
-                    size: 20,
+                    color: colorScheme.error,
+                    size: 20.r,
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: Text(
                     context.getLang.signOut,
-                    style: const TextStyle(
-                      fontSize: 15,
+                    style: TextStyle(
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFFBA1A1A),
+                      color: colorScheme.error,
                     ),
                   ),
                 ),
-                const Icon(
+                Icon(
                   Icons.chevron_right_rounded,
-                  color: Color(0xFFBA1A1A),
-                  size: 20,
+                  color: colorScheme.error,
+                  size: 20.r,
                 ),
               ],
             ),
@@ -304,21 +307,21 @@ class _ErrorBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(32.r),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               Icons.error_outline_rounded,
-              size: 56,
+              size: 56.r,
               color: Theme.of(context).colorScheme.error,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Text(
               message,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),

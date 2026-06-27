@@ -1,37 +1,49 @@
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_result.dart';
+import '../../domain/enums/task_priority.dart';
 import '../models/task_model.dart';
 
 class TasksRemoteDataSource {
   final ApiClient _client;
   const TasksRemoteDataSource(this._client);
 
-  Future<ApiResult<List<TaskModel>>> getUserTodos(int userId) =>
+  // DummyJSON /todos/user/:id returns { todos: [...], total, skip, limit }
+  Future<ApiResult<List<TaskModel>>> getTasksByProject(int projectId) =>
       _client.get<List<TaskModel>>(
-        ApiConstants.userTodos(userId),
-        fromJson: (data) => (data as List)
-            .map((e) => TaskModel.fromJson(e as Map<String, dynamic>))
-            .toList(),
+        ApiConstants.userTodos(projectId),
+        fromJson: (data) {
+          final list = (data as Map<String, dynamic>)['todos'] as List;
+          return list
+              .map((e) => TaskModel.fromJson(e as Map<String, dynamic>))
+              .toList();
+        },
       );
 
-  Future<ApiResult<TaskModel>> updateTodo(
-    int todoId,
+  Future<ApiResult<TaskModel>> updateTask(
+    int id,
     Map<String, dynamic> data,
   ) =>
       _client.patch<TaskModel>(
-        ApiConstants.todo(todoId),
+        ApiConstants.todo(id),
         data: data,
         fromJson: (json) => TaskModel.fromJson(json as Map<String, dynamic>),
       );
 
-  Future<ApiResult<TaskModel>> createTodo({
-    required int userId,
+  // DummyJSON POST /todos/add returns the new todo (fake persist, id starts at 201+)
+  Future<ApiResult<TaskModel>> createTask({
+    required int projectId,
     required String title,
+    TaskPriority priority = TaskPriority.medium,
   }) =>
       _client.post<TaskModel>(
-        ApiConstants.todos,
-        data: {'userId': userId, 'title': title, 'completed': false},
+        ApiConstants.addTodo,
+        data: {
+          'todo': title,
+          'completed': false,
+          'userId': projectId,
+          'priority': priority.name,
+        },
         fromJson: (json) => TaskModel.fromJson(json as Map<String, dynamic>),
       );
 }

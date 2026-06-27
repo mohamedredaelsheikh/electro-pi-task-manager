@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/localization.dart';
@@ -39,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
@@ -48,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
-                backgroundColor: Theme.of(context).colorScheme.error,
+                backgroundColor: colorScheme.error,
               ),
             );
           }
@@ -56,22 +58,25 @@ class _LoginPageState extends State<LoginPage> {
         child: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFFE5E2FF), Color(0xFFF7F9FB)],
-              stops: [0.0, 0.55],
+              colors: [
+                colorScheme.primary.withValues(alpha: 0.15),
+                colorScheme.surfaceContainerLow,
+              ],
+              stops: const [0.0, 0.55],
             ),
           ),
           child: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
                 children: [
-                  const SizedBox(height: 40),
+                  SizedBox(height: 40.h),
                   const AppLogo(),
-                  const SizedBox(height: 28),
+                  SizedBox(height: 28.h),
                   _LoginCard(
                     formKey: _formKey,
                     emailController: _emailController,
@@ -81,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                         setState(() => _staySignedIn = v ?? false),
                     onSubmit: _submit,
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -95,9 +100,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   const _Footer(),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                 ],
               ),
             ),
@@ -132,11 +137,11 @@ class _LoginCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE0E3E5)),
+        color: colorScheme.surfaceBright,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.r),
       child: Form(
         key: formKey,
         child: Column(
@@ -149,14 +154,14 @@ class _LoginCard extends StatelessWidget {
                     color: colorScheme.onSurface,
                   ),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6.h),
             Text(
               lang.loginSubtitle,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             AuthTextField(
               controller: emailController,
               label: lang.emailAddress,
@@ -172,7 +177,7 @@ class _LoginCard extends StatelessWidget {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             AuthTextField(
               controller: passwordController,
               label: lang.password,
@@ -188,35 +193,35 @@ class _LoginCard extends StatelessWidget {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Row(
               children: [
                 SizedBox(
-                  width: 20,
-                  height: 20,
+                  width: 20.r,
+                  height: 20.r,
                   child: Checkbox(
                     value: staySignedIn,
                     onChanged: onStaySignedInChanged,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(4.r),
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10.w),
                 Text(lang.staySignedIn,
                     style: Theme.of(context).textTheme.bodyMedium),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             BlocBuilder<AuthCubit, AuthState>(
               builder: (context, state) {
                 return FilledButton(
                   onPressed: state is AuthLoading ? null : onSubmit,
                   child: state is AuthLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
+                      ? SizedBox(
+                          height: 20.r,
+                          width: 20.r,
+                          child: const CircularProgressIndicator(
                             strokeWidth: 2,
                             color: Colors.white,
                           ),
@@ -225,8 +230,8 @@ class _LoginCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(context.getLang.signIn),
-                            const SizedBox(width: 8),
-                            const Icon(Icons.arrow_forward_rounded, size: 18),
+                            SizedBox(width: 8.w),
+                            Icon(Icons.arrow_forward_rounded, size: 18.r),
                           ],
                         ),
                 );
@@ -253,14 +258,14 @@ class _Footer extends StatelessWidget {
     return Column(
       children: [
         Text(lang.enterpriseEdition, style: labelStyle),
-        const SizedBox(height: 4),
+        SizedBox(height: 4.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton(
               onPressed: () {},
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 textStyle: labelStyle,
@@ -271,7 +276,7 @@ class _Footer extends StatelessWidget {
             TextButton(
               onPressed: () {},
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 textStyle: labelStyle,

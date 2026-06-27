@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/localization.dart';
@@ -48,6 +49,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
@@ -57,7 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
-                backgroundColor: Theme.of(context).colorScheme.error,
+                backgroundColor: colorScheme.error,
               ),
             );
           }
@@ -65,22 +67,25 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFFE5E2FF), Color(0xFFF7F9FB)],
-              stops: [0.0, 0.55],
+              colors: [
+                colorScheme.primary.withValues(alpha: 0.15),
+                colorScheme.surfaceContainerLow,
+              ],
+              stops: const [0.0, 0.55],
             ),
           ),
           child: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
                 children: [
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32.h),
                   const AppLogo(),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Text(
                     context.getLang.registerTagline,
                     textAlign: TextAlign.center,
@@ -89,7 +94,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
                   _RegisterCard(
                     formKey: _formKey,
                     nameController: _nameController,
@@ -101,9 +106,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     onSubmit: _submit,
                     onSignIn: () => context.pop(),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
                   const _RegisterFooter(),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                 ],
               ),
             ),
@@ -150,11 +155,11 @@ class _RegisterCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE0E3E5)),
+        color: colorScheme.surfaceBright,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.r),
       child: Form(
         key: formKey,
         child: Column(
@@ -167,9 +172,9 @@ class _RegisterCard extends StatelessWidget {
                     color: colorScheme.onSurface,
                   ),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6.h),
             Text(lang.registerSubtitle, style: bodyStyle),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             AuthTextField(
               controller: nameController,
               label: lang.fullName,
@@ -183,7 +188,7 @@ class _RegisterCard extends StatelessWidget {
                   ? lang.nameRequired
                   : null,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             AuthTextField(
               controller: emailController,
               label: lang.emailAddress,
@@ -199,7 +204,7 @@ class _RegisterCard extends StatelessWidget {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             AuthTextField(
               controller: passwordController,
               label: lang.password,
@@ -218,9 +223,9 @@ class _RegisterCard extends StatelessWidget {
                 return null;
               },
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6.h),
             Padding(
-              padding: const EdgeInsets.only(left: 4),
+              padding: EdgeInsets.only(left: 4.w),
               child: Text(
                 lang.passwordRegisterHint,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -228,22 +233,22 @@ class _RegisterCard extends StatelessWidget {
                     ),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: 20,
-                  height: 20,
+                  width: 20.r,
+                  height: 20.r,
                   child: Checkbox(
                     value: termsAccepted,
                     onChanged: onTermsChanged,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(4.r),
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10.w),
                 Expanded(
                   child: Text.rich(
                     TextSpan(
@@ -260,16 +265,16 @@ class _RegisterCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             BlocBuilder<AuthCubit, AuthState>(
               builder: (context, state) {
                 return FilledButton(
                   onPressed: state is AuthLoading ? null : onSubmit,
                   child: state is AuthLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
+                      ? SizedBox(
+                          height: 20.r,
+                          width: 20.r,
+                          child: const CircularProgressIndicator(
                             strokeWidth: 2,
                             color: Colors.white,
                           ),
@@ -278,16 +283,16 @@ class _RegisterCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(context.getLang.signUp),
-                            const SizedBox(width: 8),
-                            const Icon(Icons.arrow_forward_rounded, size: 18),
+                            SizedBox(width: 8.w),
+                            Icon(Icons.arrow_forward_rounded, size: 18.r),
                           ],
                         ),
                 );
               },
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: Divider(color: Color(0xFFC7C4D8)),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 20.h),
+              child: Divider(color: colorScheme.outlineVariant),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -323,13 +328,13 @@ class _RegisterFooter extends StatelessWidget {
     return Column(
       children: [
         Text(lang.enterpriseEditionFull, style: labelStyle),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [lang.projects, lang.tasks, 'Team', lang.settings]
               .map(
                 (label) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
                   child: Text(label, style: labelStyle),
                 ),
               )

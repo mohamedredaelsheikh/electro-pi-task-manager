@@ -4,7 +4,7 @@ sealed class Failure {
 }
 
 final class NetworkFailure extends Failure {
-  const NetworkFailure([super.message = 'Network error. Check your connection.']);
+  const NetworkFailure([super.message = 'Unable to reach the server. Please try again.']);
 }
 
 final class ServerFailure extends Failure {

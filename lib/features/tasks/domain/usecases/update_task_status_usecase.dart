@@ -7,6 +7,10 @@ class UpdateTaskStatusUseCase {
   final TasksRepository _repository;
   const UpdateTaskStatusUseCase(this._repository);
 
-  Future<ApiResult<Task>> call(int taskId, TaskStatus newStatus) =>
-      _repository.updateTaskStatus(taskId, newStatus);
+  Future<ApiResult<Task>> call(
+    int taskId,
+    TaskStatus newStatus,
+    int projectId,
+  ) =>
+      _repository.updateTaskStatus(taskId, newStatus, projectId);
 }

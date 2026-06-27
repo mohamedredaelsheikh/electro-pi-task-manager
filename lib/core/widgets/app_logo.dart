@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../extensions/localization.dart';
 
@@ -12,15 +13,15 @@ class AppLogo extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: size,
-          height: size,
+          width: size.r,
+          height: size.r,
           decoration: BoxDecoration(
             color: const Color(0xFF6C5CE7),
-            borderRadius: BorderRadius.circular(size * 15 / 64),
+            borderRadius: BorderRadius.circular((size * 15 / 64).r),
           ),
           child: const CustomPaint(painter: _LogoPainter()),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         Text(
           context.getLang.appName,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -44,21 +45,20 @@ class AppBarLogo extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 28,
-          height: 28,
+          width: 28.r,
+          height: 28.r,
           decoration: BoxDecoration(
             color: const Color(0xFF6C5CE7),
-            borderRadius: BorderRadius.circular(7),
+            borderRadius: BorderRadius.circular(7.r),
           ),
           child: const CustomPaint(painter: _LogoPainter()),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: 10.w),
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 20,
+          style: TextStyle(
+            fontSize: 20.sp,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF191C1E),
             letterSpacing: -0.2,
           ),
         ),

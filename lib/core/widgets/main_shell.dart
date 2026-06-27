@@ -7,35 +7,35 @@ class MainShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
-        backgroundColor: Colors.white,
+        backgroundColor: colorScheme.surfaceBright,
         surfaceTintColor: Colors.transparent,
         shadowColor: const Color(0x14191C1E),
         elevation: 1,
-        indicatorColor: const Color(0xFFE5E2FF),
+        indicatorColor: colorScheme.primary.withValues(alpha: 0.15),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         onDestinationSelected: (index) => navigationShell.goBranch(
           index,
           initialLocation: index == navigationShell.currentIndex,
         ),
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.folder_outlined, color: Color(0xFF777587)),
-            selectedIcon: Icon(Icons.folder_rounded, color: Color(0xFF3525CD)),
+            icon: Icon(Icons.folder_outlined, color: colorScheme.outline),
+            selectedIcon: Icon(Icons.folder_rounded, color: colorScheme.primary),
             label: 'Projects',
           ),
           NavigationDestination(
-            icon: Icon(Icons.person_outline_rounded, color: Color(0xFF777587)),
-            selectedIcon: Icon(Icons.person_rounded, color: Color(0xFF3525CD)),
+            icon: Icon(Icons.person_outline_rounded, color: colorScheme.outline),
+            selectedIcon: Icon(Icons.person_rounded, color: colorScheme.primary),
             label: 'Profile',
           ),
           NavigationDestination(
-            icon: Icon(Icons.settings_outlined, color: Color(0xFF777587)),
-            selectedIcon:
-                Icon(Icons.settings_rounded, color: Color(0xFF3525CD)),
+            icon: Icon(Icons.settings_outlined, color: colorScheme.outline),
+            selectedIcon: Icon(Icons.settings_rounded, color: colorScheme.primary),
             label: 'Settings',
           ),
         ],

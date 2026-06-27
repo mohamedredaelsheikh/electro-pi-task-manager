@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import '../constants/api_constants.dart';
 import '../error/failures.dart';
@@ -67,14 +69,19 @@ class ApiClient {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.receiveTimeout:
       case DioExceptionType.sendTimeout:
-        return const NetworkFailure('Connection timed out.');
+        return const NetworkFailure('Connection timed out. Please try again.');
       case DioExceptionType.connectionError:
-        return const NetworkFailure();
+        return const NetworkFailure('Unable to reach the server. Please try again.');
       case DioExceptionType.badResponse:
         final statusCode = e.response?.statusCode;
         final message = e.response?.data?['message'] as String? ??
             'Server error ($statusCode).';
         return ServerFailure(message, statusCode: statusCode);
+      case DioExceptionType.unknown:
+        if (e.error is SocketException) {
+          return const NetworkFailure('Unable to reach the server. Please try again.');
+        }
+        return const UnexpectedFailure();
       default:
         return const UnexpectedFailure();
     }

@@ -11,34 +11,30 @@ class TaskModel extends Task {
     required super.priority,
   });
 
+  // DummyJSON todo: { id, todo, completed, userId }
   factory TaskModel.fromJson(Map<String, dynamic> json) {
     final id = json['id'] as int;
     final completed = json['completed'] as bool? ?? false;
     return TaskModel(
       id: id,
-      userId: json['userId'] as int,
-      title: json['title'] as String,
-      status: _deriveStatus(id, completed),
-      priority: _derivePriority(id),
+      userId: json['userId'] as int? ?? 0,
+      title: (json['todo'] ?? json['title']) as String,
+      status: completed ? TaskStatus.done : TaskStatus.pending,
+      priority: _parsePriority(json['priority'] as String? ?? 'medium'),
     );
   }
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'userId': userId,
-        'title': title,
+        'todo': title,
         'completed': status.isDone,
+        'priority': priority.name,
       };
 
-  // Completed todos are done; among incomplete ones alternate pending/inProgress.
-  static TaskStatus _deriveStatus(int id, bool completed) {
-    if (completed) return TaskStatus.done;
-    return id.isEven ? TaskStatus.inProgress : TaskStatus.pending;
-  }
-
-  static TaskPriority _derivePriority(int id) => switch (id % 3) {
-        0 => TaskPriority.high,
-        1 => TaskPriority.medium,
-        _ => TaskPriority.low,
+  static TaskPriority _parsePriority(String value) => switch (value) {
+        'high' => TaskPriority.high,
+        'low' => TaskPriority.low,
+        _ => TaskPriority.medium,
       };
 }

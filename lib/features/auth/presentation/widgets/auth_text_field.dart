@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AuthTextField extends StatefulWidget {
   final TextEditingController controller;
@@ -44,7 +45,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
                 letterSpacing: 0.8,
               ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         TextFormField(
           controller: widget.controller,
           keyboardType: widget.keyboardType,
@@ -53,7 +54,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
           validator: widget.validator,
           style: TextStyle(
             color: colorScheme.onSurface,
-            fontSize: 15,
+            fontSize: 15.sp,
             fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(

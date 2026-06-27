@@ -9,10 +9,8 @@ ThemeData get lightTheme {
     scaffoldBackgroundColor: appColors.surface,
     appBarTheme: AppBarTheme(
       centerTitle: true,
-      shape: LinearBorder(
-        side: BorderSide(color: appColors.secondary, width: 1.r),
-        bottom: const LinearBorderEdge(),
-      ),
+      backgroundColor: appColors.surfaceContainerLow,
+      foregroundColor: appColors.onSurface,
     ),
     inputDecorationTheme: InputDecorationTheme(
       contentPadding: EdgeInsets.all(11.r),
@@ -90,11 +88,8 @@ ThemeData get darkTheme {
     scaffoldBackgroundColor: darkAppColors.surface,
     appBarTheme: AppBarTheme(
       centerTitle: true,
-      backgroundColor: darkAppColors.surface,
-      shape: LinearBorder(
-        side: BorderSide(color: darkAppColors.secondary, width: 1.r),
-        bottom: const LinearBorderEdge(),
-      ),
+      backgroundColor: darkAppColors.surfaceContainerLow,
+      foregroundColor: Colors.white,
     ),
     inputDecorationTheme: InputDecorationTheme(
       contentPadding: EdgeInsets.all(11.r),

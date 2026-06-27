@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/localization.dart';
@@ -10,6 +11,7 @@ import '../../../../core/widgets/error_view.dart';
 import '../cubit/projects_cubit.dart';
 import '../cubit/projects_state.dart';
 import '../widgets/project_card.dart';
+import '../widgets/project_card_shimmer.dart';
 
 class ProjectsPage extends StatelessWidget {
   const ProjectsPage({super.key});
@@ -17,10 +19,10 @@ class ProjectsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lang = context.getLang;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F9FB),
+      backgroundColor: colorScheme.surfaceContainerLow,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF7F9FB),
         scrolledUnderElevation: 1,
         surfaceTintColor: Colors.transparent,
         shadowColor: const Color(0x14191C1E),
@@ -28,18 +30,27 @@ class ProjectsPage extends StatelessWidget {
       ),
       body: BlocBuilder<ProjectsCubit, ProjectsState>(
         builder: (context, state) => switch (state) {
-          ProjectsInitial() ||
-          ProjectsLoading() => const Center(child: CircularProgressIndicator()),
+          ProjectsInitial() || ProjectsLoading() => const ProjectsShimmerList(),
           ProjectsLoaded(:final projects) when projects.isEmpty =>
-            EmptyStateWidget(
-              icon: Icons.folder_open_rounded,
-              title: lang.noProjects,
-              subtitle: lang.noProjectsSubtitle,
+            RefreshIndicator(
+              onRefresh: () => context.read<ProjectsCubit>().loadProjects(),
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverFillRemaining(
+                    child: EmptyStateWidget(
+                      icon: Icons.folder_open_rounded,
+                      title: lang.noProjects,
+                      subtitle: lang.noProjectsSubtitle,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ProjectsLoaded(:final projects) => RefreshIndicator(
             onRefresh: () => context.read<ProjectsCubit>().loadProjects(),
             child: ListView.builder(
-              padding: const EdgeInsets.only(top: 8, bottom: 24),
+              padding: EdgeInsets.only(top: 8.h, bottom: 24.h),
               itemCount: projects.length,
               itemBuilder: (context, index) => ProjectCard(
                 project: projects[index],

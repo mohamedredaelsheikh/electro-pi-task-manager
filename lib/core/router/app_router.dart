@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import 'page_transitions.dart';
+
 import '../../features/auth/presentation/cubit/auth_cubit.dart';
 import '../../features/auth/presentation/cubit/auth_state.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
@@ -50,15 +52,18 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(
       path: AppRoutes.splash,
-      builder: (_, _) => const SplashPage(),
+      pageBuilder: (_, state) =>
+          fadePage(pageKey: state.pageKey, child: const SplashPage()),
     ),
     GoRoute(
       path: AppRoutes.login,
-      builder: (_, _) => const LoginPage(),
+      pageBuilder: (_, state) =>
+          slideRightPage(pageKey: state.pageKey, child: const LoginPage()),
     ),
     GoRoute(
       path: AppRoutes.register,
-      builder: (_, _) => const RegisterPage(),
+      pageBuilder: (_, state) =>
+          slideRightPage(pageKey: state.pageKey, child: const RegisterPage()),
     ),
     StatefulShellRoute.indexedStack(
       builder: (_, _, shell) => MainShell(navigationShell: shell),
@@ -92,12 +97,15 @@ final appRouter = GoRouter(
     // Project details — full-screen, outside the shell
     GoRoute(
       path: AppRoutes.projectDetails,
-      builder: (_, state) {
+      pageBuilder: (_, state) {
         final id = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
         final title = (state.extra as String?) ?? 'Project #$id';
-        return BlocProvider(
-          create: (_) => sl<TasksCubit>(param1: id)..loadTasks(),
-          child: ProjectDetailsPage(projectId: id, projectTitle: title),
+        return slideUpPage(
+          pageKey: state.pageKey,
+          child: BlocProvider(
+            create: (_) => sl<TasksCubit>(param1: id)..loadTasks(),
+            child: ProjectDetailsPage(projectId: id, projectTitle: title),
+          ),
         );
       },
     ),

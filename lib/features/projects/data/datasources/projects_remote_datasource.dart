@@ -7,11 +7,16 @@ class ProjectsRemoteDataSource {
   final ApiClient _client;
   const ProjectsRemoteDataSource(this._client);
 
-  Future<ApiResult<List<ProjectModel>>> getProjects(int userId) =>
+  // DummyJSON /users returns { users: [...], total, skip, limit }
+  Future<ApiResult<List<ProjectModel>>> getProjects() =>
       _client.get<List<ProjectModel>>(
-        ApiConstants.userPosts(userId),
-        fromJson: (data) => (data as List)
-            .map((e) => ProjectModel.fromJson(e as Map<String, dynamic>))
-            .toList(),
+        ApiConstants.users,
+        queryParameters: {'limit': '10', 'select': 'id,firstName,lastName,email'},
+        fromJson: (data) {
+          final list = (data as Map<String, dynamic>)['users'] as List;
+          return list
+              .map((e) => ProjectModel.fromJson(e as Map<String, dynamic>))
+              .toList();
+        },
       );
 }

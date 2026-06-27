@@ -15,6 +15,14 @@ class Project {
     required this.status,
   });
 
+  Project copyWith({ProjectStatus? status}) => Project(
+        id: id,
+        userId: userId,
+        title: title,
+        description: description,
+        status: status ?? this.status,
+      );
+
   @override
   bool operator ==(Object other) => other is Project && other.id == id;
 

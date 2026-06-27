@@ -24,5 +24,5 @@ class AuthLocalDataSource {
 
   bool get isLoggedIn => _storage.hasToken;
 
-  Future<void> clearUser() => _storage.clear();
+  Future<void> clearUser() => _storage.clearSession();
 }

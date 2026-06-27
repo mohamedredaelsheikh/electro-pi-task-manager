@@ -24,7 +24,7 @@ class AppColors {
   Color get secondaryContainer => const Color(0xff404040);
 
   /// color of icon in icon button
-  Color get onSecondaryContainer => const Color(0xff292D32);
+  Color get onSecondaryContainer => Colors.black;
 
   /// disabled
   Color get secondaryFixed => const Color(0xffA3A3A3);
@@ -48,10 +48,10 @@ class AppColors {
   Color get surfaceBright => const Color(0xffFAFAFA);
 
   /// primary text color
-  Color get onSurface => const Color(0xff1B1C22);
+  Color get onSurface => Colors.black;
 
-  /// border color
-  Color get onSurfaceVariant => const Color(0xffDDDDDD);
+  /// secondary label / icon color
+  Color get onSurfaceVariant => const Color(0xff555555);
 
   /// dim surface color
   Color get surfaceDim => const Color(0xffDFDFDF);
@@ -64,7 +64,7 @@ class AppColors {
   Color get inverseSurface => const Color(0xffB734A3);
 
   /// hint text color
-  Color get outline => const Color(0xff737373);
+  Color get outline => const Color(0xff333333);
 
   /// divider color
   Color get outlineVariant => const Color(0xffF4FAF3);
@@ -98,7 +98,7 @@ class DarkAppColors extends AppColors {
   Color get secondaryContainer => const Color(0xff2A2C3A);
 
   @override
-  Color get onSecondaryContainer => const Color(0xffC5C7D8);
+  Color get onSecondaryContainer => Colors.white;
 
   @override
   Color get secondaryFixed => const Color(0xff5A5B6A);
@@ -125,10 +125,10 @@ class DarkAppColors extends AppColors {
   Color get surfaceBright => const Color(0xff1E2035);
 
   @override
-  Color get onSurface => const Color(0xffE8E9F2);
+  Color get onSurface => Colors.white;
 
   @override
-  Color get onSurfaceVariant => const Color(0xff2E3048);
+  Color get onSurfaceVariant => const Color(0xffCCCCCC);
 
   @override
   Color get surfaceDim => const Color(0xff090A14);
@@ -143,10 +143,10 @@ class DarkAppColors extends AppColors {
   Color get inverseSurface => const Color(0xff5B7DD4);
 
   @override
-  Color get outline => const Color(0xff8889A0);
+  Color get outline => const Color(0xffDDDDDD);
 
   @override
-  Color get outlineVariant => const Color(0xff1E2030);
+  Color get outlineVariant => const Color(0xff2C2F4A);
 
   @override
   Color get errorContainer => const Color(0xff3D1515);

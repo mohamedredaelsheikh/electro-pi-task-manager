@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../domain/entities/task.dart';
 import '../../domain/enums/task_priority.dart';
@@ -13,63 +14,62 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDone = task.status.isDone;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE0E3E5)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _TaskCheckbox(
-              isDone: isDone,
-              onTap: isDone
-                  ? null
-                  : () => context.read<TasksCubit>().markAsDone(task.id),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          task.title,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            height: 1.4,
-                            color: isDone
-                                ? const Color(0xFF191C1E).withValues(alpha: 0.45)
-                                : const Color(0xFF191C1E),
-                            decoration: isDone
-                                ? TextDecoration.lineThrough
-                                : TextDecoration.none,
-                            decorationColor:
-                                const Color(0xFF191C1E).withValues(alpha: 0.45),
+    return GestureDetector(
+      onTap: () => context.read<TasksCubit>().toggleStatus(task.id),
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 6.h),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceBright,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: colorScheme.outlineVariant),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.r),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _TaskCheckbox(isDone: isDone),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            task.title,
+                            style: TextStyle(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              height: 1.4,
+                              color: isDone
+                                  ? colorScheme.onSurface.withValues(alpha: 0.45)
+                                  : colorScheme.onSurface,
+                              decoration: isDone
+                                  ? TextDecoration.lineThrough
+                                  : TextDecoration.none,
+                              decorationColor:
+                                  colorScheme.onSurface.withValues(alpha: 0.45),
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      _PriorityChip(priority: task.priority),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  _StatusDot(status: task.status),
-                ],
+                        SizedBox(width: 8.w),
+                        _PriorityChip(priority: task.priority),
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+                    _StatusDot(status: task.status),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -78,29 +78,31 @@ class TaskCard extends StatelessWidget {
 
 class _TaskCheckbox extends StatelessWidget {
   final bool isDone;
-  final VoidCallback? onTap;
-
-  const _TaskCheckbox({required this.isDone, required this.onTap});
+  const _TaskCheckbox({required this.isDone});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 24,
-        height: 24,
-        margin: const EdgeInsets.only(top: 1),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: isDone ? const Color(0xFF10B981) : Colors.white,
-          border: isDone
-              ? null
-              : Border.all(color: const Color(0xFFC7C4D8), width: 1.5),
-        ),
-        child: isDone
-            ? const Icon(Icons.check_rounded, size: 14, color: Colors.white)
-            : null,
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final borderColor = isDark
+        ? colorScheme.onSurface.withValues(alpha: 0.55)
+        : colorScheme.onSurface.withValues(alpha: 0.35);
+
+    return Container(
+      width: 24.r,
+      height: 24.r,
+      margin: EdgeInsets.only(top: 1.h),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: isDone ? const Color(0xFF10B981) : Colors.transparent,
+        border: isDone
+            ? null
+            : Border.all(color: borderColor, width: 2),
       ),
+      child: isDone
+          ? Icon(Icons.check_rounded, size: 14.r, color: Colors.white)
+          : null,
     );
   }
 }
@@ -130,16 +132,16 @@ class _PriorityChip extends StatelessWidget {
     };
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
       decoration: BoxDecoration(
         color: baseColor.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(100),
+        borderRadius: BorderRadius.circular(100.r),
       ),
       child: Text(
         label,
         style: TextStyle(
           color: textColor,
-          fontSize: 11,
+          fontSize: 11.sp,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.3,
         ),
@@ -164,18 +166,18 @@ class _StatusDot extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 8,
-          height: 8,
+          width: 8.r,
+          height: 8.r,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: dotColor,
           ),
         ),
-        const SizedBox(width: 6),
+        SizedBox(width: 6.w),
         Text(
           label,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w500,
             color: dotColor,
           ),

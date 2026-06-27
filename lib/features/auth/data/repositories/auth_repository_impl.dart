@@ -19,11 +19,21 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    final result = await _remote.findUserByEmail(email.trim().toLowerCase());
+    final normEmail = email.trim().toLowerCase();
 
+    // Locally-registered users (via register()) live only in local storage.
+    // Re-issue a token so isLoggedIn is true after re-login.
+    final cached = _local.getCachedUser();
+    if (cached != null && cached.email == normEmail) {
+      await _local.cacheUser(cached, _fakeToken(cached.id));
+      return ApiSuccess(cached);
+    }
+
+    // Look up the DummyJSON user by email — no real password validation
+    // (DummyJSON is a public read-only mock, passwords are not stored).
+    final result = await _remote.findUserByEmail(normEmail);
     if (result case ApiSuccess(:final data)) {
-      final token = _fakeToken(data.id);
-      await _local.cacheUser(data, token);
+      await _local.cacheUser(data, _fakeToken(data.id));
       return ApiSuccess(data);
     }
     return ApiFailure((result as ApiFailure).failure);
@@ -37,13 +47,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     final normEmail = email.trim().toLowerCase();
 
-    // Prevent re-registration from overwriting an active cached session.
     final cached = _local.getCachedUser();
     if (cached != null && cached.email == normEmail) {
       return const ApiFailure(AuthFailure('An account with this email already exists.'));
     }
 
-    // JSONPlaceholder is read-only — registration is stored locally only.
+    // Registration is local-only — DummyJSON is read-only.
     final user = UserModel(
       id: Random().nextInt(90000) + 10000,
       name: name.trim(),

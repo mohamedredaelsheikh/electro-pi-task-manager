@@ -30,6 +30,10 @@ class TokenStorage {
   String? getUserName() => _prefs.getString(_userNameKey);
   String? getUserEmail() => _prefs.getString(_userEmailKey);
 
+  // Clears the session token only — user profile data is kept so re-login works
+  // for locally-registered users (DummyJSON is read-only, no server-side accounts).
+  Future<void> clearSession() => _prefs.remove(_tokenKey);
+
   Future<void> clear() async {
     await _prefs.remove(_tokenKey);
     await _prefs.remove(_userIdKey);

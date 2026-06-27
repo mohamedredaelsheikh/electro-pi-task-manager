@@ -1,6 +1,8 @@
 import 'package:get_it/get_it.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../cache/hive_cache_client.dart';
 import '../network/api_client.dart';
 import '../storage/token_storage.dart';
 import '../../features/auth/data/datasources/auth_local_datasource.dart';
@@ -12,6 +14,7 @@ import '../../features/auth/domain/usecases/login_usecase.dart';
 import '../../features/auth/domain/usecases/logout_usecase.dart';
 import '../../features/auth/domain/usecases/register_usecase.dart';
 import '../../features/auth/presentation/cubit/auth_cubit.dart';
+import '../../features/projects/data/datasources/projects_local_datasource.dart';
 import '../../features/projects/data/datasources/projects_remote_datasource.dart';
 import '../../features/projects/data/repositories/projects_repository_impl.dart';
 import '../../features/projects/domain/repositories/projects_repository.dart';
@@ -21,6 +24,7 @@ import '../../features/profile/domain/repositories/profile_repository.dart';
 import '../../features/profile/domain/usecases/get_profile_usecase.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/projects/presentation/cubit/projects_cubit.dart';
+import '../../features/tasks/data/datasources/tasks_local_datasource.dart';
 import '../../features/tasks/data/datasources/tasks_remote_datasource.dart';
 import '../../features/tasks/data/repositories/tasks_repository_impl.dart';
 import '../../features/tasks/domain/repositories/tasks_repository.dart';
@@ -40,12 +44,17 @@ final GetIt sl = GetIt.instance;
 
 Future<void> configureDependencies() async {
   // External
+  await Hive.initFlutter();
+  final cacheBox = await Hive.openBox<String>('app_cache_v2');
   final prefs = await SharedPreferences.getInstance();
+
+  sl.registerSingleton<Box<String>>(cacheBox);
   sl.registerSingleton<SharedPreferences>(prefs);
 
   // Core
   sl.registerLazySingleton<ApiClient>(ApiClient.new);
   sl.registerLazySingleton<TokenStorage>(() => TokenStorage(sl()));
+  sl.registerLazySingleton<HiveCacheClient>(() => HiveCacheClient(sl()));
 
   // Auth — data
   sl.registerLazySingleton<AuthLocalDataSource>(
@@ -90,6 +99,9 @@ Future<void> configureDependencies() async {
   sl.registerLazySingleton<ProjectsRemoteDataSource>(
     () => ProjectsRemoteDataSource(sl()),
   );
+  sl.registerLazySingleton<ProjectsLocalDataSource>(
+    () => ProjectsLocalDataSource(sl()),
+  );
   sl.registerLazySingleton<ProjectsRepository>(
     () => ProjectsRepositoryImpl(sl(), sl()),
   );
@@ -97,12 +109,18 @@ Future<void> configureDependencies() async {
   // Projects — domain
   sl.registerLazySingleton(() => GetProjectsUseCase(sl()));
 
-  // Projects — presentation
-  sl.registerFactory(() => ProjectsCubit(sl()));
+  // Projects — presentation (singleton so task updates propagate back to the project list)
+  sl.registerLazySingleton(
+    () => ProjectsCubit(sl()),
+    dispose: (cubit) => cubit.close(),
+  );
 
   // Tasks — data
   sl.registerLazySingleton<TasksRemoteDataSource>(
     () => TasksRemoteDataSource(sl()),
+  );
+  sl.registerLazySingleton<TasksLocalDataSource>(
+    () => TasksLocalDataSource(sl()),
   );
   sl.registerLazySingleton<TasksRepository>(
     () => TasksRepositoryImpl(sl(), sl()),
@@ -120,6 +138,7 @@ Future<void> configureDependencies() async {
       getTasks: sl(),
       updateStatus: sl(),
       createTask: sl(),
+      projectsCubit: sl(),
     ),
   );
 

@@ -1,51 +1,130 @@
+import '../../../../core/error/failures.dart';
 import '../../../../core/network/api_result.dart';
-import '../../../../core/storage/token_storage.dart';
 import '../../domain/entities/task.dart';
+import '../../domain/enums/task_priority.dart';
 import '../../domain/enums/task_status.dart';
 import '../../domain/repositories/tasks_repository.dart';
+import '../datasources/tasks_local_datasource.dart';
 import '../datasources/tasks_remote_datasource.dart';
+import '../models/task_model.dart';
 
 class TasksRepositoryImpl implements TasksRepository {
   final TasksRemoteDataSource _remote;
-  final TokenStorage _storage;
+  final TasksLocalDataSource _local;
 
-  const TasksRepositoryImpl(this._remote, this._storage);
+  const TasksRepositoryImpl(this._remote, this._local);
 
   @override
   Future<ApiResult<List<Task>>> getTasksByProject(int projectId) async {
-    final userId = _effectiveUserId;
-    final result = await _remote.getUserTodos(userId);
+    final result = await _remote.getTasksByProject(projectId);
 
     if (result case ApiSuccess(:final data)) {
-      // Deterministically associate each todo to a project using modulo.
-      // User 1 has 10 projects (posts) and 20 todos → ~2 tasks per project.
-      final tasks = data.where((t) => t.id % 10 == projectId % 10).toList();
-      return ApiSuccess(tasks);
+      // Preserve locally-created tasks (negative IDs) across reloads —
+      // the remote never returns them because DummyJSON doesn't persist POSTs.
+      final cached = _local.getTasks(projectId) ?? [];
+      final localOnly = cached
+          .whereType<TaskModel>()
+          .where((t) => t.id < 0)
+          .toList();
+      final merged = [...localOnly, ...data.whereType<TaskModel>()];
+      await _local.saveTasks(projectId, merged);
+      return ApiSuccess(merged);
     }
-    return ApiFailure((result as ApiFailure).failure);
+
+    final failure = (result as ApiFailure).failure;
+    if (failure is NetworkFailure) {
+      final cached = _local.getTasks(projectId);
+      if (cached != null) return ApiSuccess(cached);
+    }
+    return ApiFailure(failure);
   }
 
   @override
   Future<ApiResult<Task>> updateTaskStatus(
-      int taskId, TaskStatus newStatus) async {
-    final result = await _remote.updateTodo(
-      taskId,
-      {'completed': newStatus.isDone},
-    );
+      int taskId, TaskStatus newStatus, int projectId) async {
+    // Locally-created task — no API call, update cache only.
+    if (taskId < 0) {
+      return _updateCacheOnly(taskId, newStatus, projectId);
+    }
+
+    final result = await _remote.updateTask(taskId, {'completed': newStatus.isDone});
     if (result case ApiSuccess(:final data)) {
-      // JSONPlaceholder echoes completed; re-apply full status locally.
-      return ApiSuccess(data.copyWith(status: newStatus));
+      final updated = data.copyWith(status: newStatus);
+      await _patchCache(taskId, updated, projectId);
+      return ApiSuccess(updated);
     }
     return ApiFailure((result as ApiFailure).failure);
   }
 
   @override
-  Future<ApiResult<Task>> createTask({required String title}) =>
-      _remote.createTodo(userId: _effectiveUserId, title: title);
+  Future<ApiResult<Task>> createTask({
+    required String title,
+    required int projectId,
+    TaskPriority priority = TaskPriority.medium,
+  }) async {
+    final remoteResult = await _remote.createTask(
+      projectId: projectId,
+      title: title,
+      priority: priority,
+    );
+    if (remoteResult case ApiFailure()) return remoteResult;
 
-  int get _effectiveUserId {
-    final id = _storage.getUserId() ?? 1;
-    // JSONPlaceholder only has users 1–10.
-    return id <= 10 ? id : 1;
+    // DummyJSON does not persist POSTs. Assign a unique negative local ID so
+    // the task survives navigation and skips PATCH calls via taskId < 0 guard.
+    final cached = _local.getTasks(projectId) ?? [];
+    final negCount = cached.where((t) => t.id < 0).length;
+    final localTask = TaskModel(
+      id: -(negCount + 1),
+      userId: projectId,
+      title: title,
+      status: TaskStatus.pending,
+      priority: priority,
+    );
+    await _local.saveTasks(
+      projectId,
+      [localTask, ...cached.whereType<TaskModel>()],
+    );
+    return ApiSuccess(localTask);
+  }
+
+  // Updates a local (negative-ID) task's status directly in cache.
+  Future<ApiResult<Task>> _updateCacheOnly(
+      int taskId, TaskStatus newStatus, int projectId) async {
+    final cached = _local.getTasks(projectId);
+    if (cached == null) return const ApiFailure(CacheFailure('Task not found.'));
+
+    TaskModel? updated;
+    final patched = cached.map((t) {
+      if (t.id != taskId) return t;
+      updated = TaskModel(
+        id: t.id,
+        userId: t.userId,
+        title: t.title,
+        status: newStatus,
+        priority: t.priority,
+      );
+      return updated!;
+    }).whereType<TaskModel>().toList();
+
+    if (updated == null) return const ApiFailure(CacheFailure('Task not found.'));
+    await _local.saveTasks(projectId, patched);
+    return ApiSuccess(updated!);
+  }
+
+  // Replaces a single task entry in the cache after a successful API update.
+  Future<void> _patchCache(int taskId, Task updated, int projectId) async {
+    final cached = _local.getTasks(projectId);
+    if (cached == null) return;
+    final patched = cached.map((t) {
+      if (t.id != taskId) return t;
+      return TaskModel(
+        id: updated.id,
+        userId: updated.userId,
+        title: updated.title,
+        status: updated.status,
+        priority: updated.priority,
+      );
+    }).whereType<TaskModel>().toList();
+    await _local.saveTasks(projectId, patched);
   }
 }
