@@ -225,7 +225,7 @@ class SEn extends S {
   String get noTasksYet => 'No tasks yet';
 
   @override
-  String get noTasksSubtitle => 'Tap "Add Task" to create the first one.';
+  String get noTasksSubtitle => 'Tap \"Add Task\" to create the first one.';
 
   @override
   String get todayLabel => 'TODAY';

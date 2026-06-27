@@ -223,7 +223,7 @@ class SAr extends S {
   String get noTasksYet => 'لا توجد مهام بعد';
 
   @override
-  String get noTasksSubtitle => 'اضغط على "إضافة مهمة" للبدء.';
+  String get noTasksSubtitle => 'اضغط على \"إضافة مهمة\" للبدء.';
 
   @override
   String get todayLabel => 'اليوم';
