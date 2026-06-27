@@ -23,11 +23,28 @@ A Flutter task management application built as a technical assessment for Electr
 
 ## Screenshots
 
-> Add screenshots to a `screenshots/` folder and update the paths below.
-
-| Login | Projects | Tasks | Settings |
-|---|---|---|---|
-| _(coming soon)_ | _(coming soon)_ | _(coming soon)_ | _(coming soon)_ |
+<table>
+  <tr>
+    <td align="center"><b>Login</b></td>
+    <td align="center"><b>Register</b></td>
+    <td align="center"><b>Projects</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/login.jpeg" width="220"/></td>
+    <td><img src="screenshots/register.jpeg" width="220"/></td>
+    <td><img src="screenshots/projects.jpeg" width="220"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Project Details & Tasks</b></td>
+    <td align="center"><b>Profile</b></td>
+    <td align="center"><b>Settings</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/project_details.jpeg" width="220"/></td>
+    <td><img src="screenshots/profile.jpeg" width="220"/></td>
+    <td><img src="screenshots/settings.jpeg" width="220"/></td>
+  </tr>
+</table>
 
 ---
 
