@@ -22,7 +22,7 @@ class LanguageSheet extends StatelessWidget {
 
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return ColoredBox(
-          color: isDark ? context.primary : Colors.white,
+          color: isDark ? context.primaryFixedDim : Colors.white,
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 28.h),
