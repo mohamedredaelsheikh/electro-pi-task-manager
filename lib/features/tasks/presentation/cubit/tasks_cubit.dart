@@ -88,6 +88,10 @@ class TasksCubit extends Cubit<TasksState> {
   }
 
   void _syncProjectStatus(List<Task> tasks) {
-    _onStatusChanged?.call(projectId, deriveProjectStatus(tasks));
+    // Best-effort: a closed or unregistered ProjectsCubit must not
+    // roll back a successfully-created task.
+    try {
+      _onStatusChanged?.call(projectId, deriveProjectStatus(tasks));
+    } catch (_) {}
   }
 }

@@ -19,7 +19,10 @@ class SettingsPage extends StatelessWidget {
     final lang = context.getLang;
     final cubit = context.read<SettingsCubit>();
     final themeMode = context.watch<SettingsCubit>().state.themeMode;
-    final isDark = themeMode == AppThemeMode.dark;
+    final platformBrightness = MediaQuery.platformBrightnessOf(context);
+    final isDark = themeMode == AppThemeMode.dark ||
+        (themeMode == AppThemeMode.system &&
+            platformBrightness == Brightness.dark);
     final currentLanguage = context.watch<LangCubit>().state.currentLanguage;
 
     final colorScheme = Theme.of(context).colorScheme;

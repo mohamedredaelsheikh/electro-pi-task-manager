@@ -42,11 +42,15 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isSubmitting = true);
-    await context.read<TasksCubit>().addTask(
-          _titleController.text.trim(),
-          priority: _priority,
-        );
-    if (mounted) Navigator.of(context).pop();
+    try {
+      await context.read<TasksCubit>().addTask(
+            _titleController.text.trim(),
+            priority: _priority,
+          );
+      if (mounted) Navigator.of(context).pop();
+    } catch (_) {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
   }
 
   Future<void> _pickDate() async {
