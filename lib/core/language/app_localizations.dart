@@ -67,6 +67,12 @@ abstract class S {
 
   final String localeName;
 
+  static S? _current;
+
+  // Access the current locale's strings without a BuildContext —
+  // valid after the first frame (delegate sets this in load()).
+  static S get current => _current!;
+
   static S of(BuildContext context) {
     return Localizations.of<S>(context, S)!;
   }
@@ -462,6 +468,48 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Dark Mode'**
   String get darkMode;
+
+  /// No description provided for @languages.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languages;
+
+  /// No description provided for @no_internet_connection.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get no_internet_connection;
+
+  /// No description provided for @back_online.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re back online'**
+  String get back_online;
+
+  /// No description provided for @timeout_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection timed out'**
+  String get timeout_error;
+
+  /// No description provided for @check_your_connection.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again'**
+  String get check_your_connection;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @oops.
+  ///
+  /// In en, this message translates to:
+  /// **'Oops!'**
+  String get oops;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
@@ -469,7 +517,9 @@ class _SDelegate extends LocalizationsDelegate<S> {
 
   @override
   Future<S> load(Locale locale) {
-    return SynchronousFuture<S>(lookupS(locale));
+    final instance = lookupS(locale);
+    S._current = instance;
+    return SynchronousFuture<S>(instance);
   }
 
   @override

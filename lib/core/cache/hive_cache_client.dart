@@ -13,6 +13,8 @@ class HiveCacheClient {
       if (raw == null) return null;
       return (jsonDecode(raw) as List).cast<Map<String, dynamic>>();
     } catch (_) {
+      // Corrupt or schema-changed entry — evict so it doesn't persist indefinitely.
+      _box.delete(key);
       return null;
     }
   }

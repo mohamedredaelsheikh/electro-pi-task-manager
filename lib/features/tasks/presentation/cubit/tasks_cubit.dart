@@ -2,13 +2,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/network/api_result.dart';
 import '../../../projects/domain/enums/project_status.dart';
-import '../../../projects/presentation/cubit/projects_cubit.dart';
 import '../../domain/entities/task.dart';
 import '../../domain/enums/task_priority.dart';
 import '../../domain/enums/task_status.dart';
 import '../../domain/usecases/create_task_usecase.dart';
 import '../../domain/usecases/get_tasks_usecase.dart';
 import '../../domain/usecases/update_task_status_usecase.dart';
+import '../../domain/utils/project_status_utils.dart';
 import 'tasks_state.dart';
 
 class TasksCubit extends Cubit<TasksState> {
@@ -16,18 +16,18 @@ class TasksCubit extends Cubit<TasksState> {
   final GetTasksUseCase _getTasks;
   final UpdateTaskStatusUseCase _updateStatus;
   final CreateTaskUseCase _createTask;
-  final ProjectsCubit _projectsCubit;
+  final void Function(int projectId, ProjectStatus status)? _onStatusChanged;
 
   TasksCubit({
     required this.projectId,
     required GetTasksUseCase getTasks,
     required UpdateTaskStatusUseCase updateStatus,
     required CreateTaskUseCase createTask,
-    required ProjectsCubit projectsCubit,
+    void Function(int projectId, ProjectStatus status)? onStatusChanged,
   })  : _getTasks = getTasks,
         _updateStatus = updateStatus,
         _createTask = createTask,
-        _projectsCubit = projectsCubit,
+        _onStatusChanged = onStatusChanged,
         super(const TasksInitial());
 
   Future<void> loadTasks() async {
@@ -67,14 +67,7 @@ class TasksCubit extends Cubit<TasksState> {
     final trimmed = title.trim();
     if (trimmed.isEmpty) return;
 
-    // Snapshot tasks before the async call so a concurrent loadTasks()
-    // cannot invalidate the state check after the await.
-    final previousTasks = switch (state) {
-      TasksLoaded(:final tasks) => tasks,
-      _ => <Task>[],
-    };
-
-    final result = await _createTask(
+      final result = await _createTask(
       title: trimmed,
       priority: priority,
       projectId: projectId,
@@ -82,20 +75,19 @@ class TasksCubit extends Cubit<TasksState> {
     if (isClosed) return;
 
     if (result case ApiSuccess(:final data)) {
-      final updated = [data, ...previousTasks];
+      // Use the current state after the await so any concurrent loadTasks()
+      // refresh is not overwritten by a stale pre-call snapshot.
+      final currentTasks = switch (state) {
+        TasksLoaded(:final tasks) => tasks,
+        _ => <Task>[],
+      };
+      final updated = [data, ...currentTasks];
       emit(TasksLoaded(updated));
       _syncProjectStatus(updated);
     }
   }
 
   void _syncProjectStatus(List<Task> tasks) {
-    _projectsCubit.updateProjectStatus(projectId, _deriveProjectStatus(tasks));
-  }
-
-  ProjectStatus _deriveProjectStatus(List<Task> tasks) {
-    if (tasks.isEmpty) return ProjectStatus.pending;
-    if (tasks.every((t) => t.status == TaskStatus.done)) return ProjectStatus.done;
-    if (tasks.any((t) => t.status != TaskStatus.pending)) return ProjectStatus.inProgress;
-    return ProjectStatus.pending;
+    _onStatusChanged?.call(projectId, deriveProjectStatus(tasks));
   }
 }

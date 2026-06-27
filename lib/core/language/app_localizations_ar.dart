@@ -191,4 +191,25 @@ class SAr extends S {
 
   @override
   String get darkMode => 'الوضع الداكن';
+
+  @override
+  String get languages => 'اللغة';
+
+  @override
+  String get no_internet_connection => 'لا يوجد اتصال بالإنترنت';
+
+  @override
+  String get back_online => 'عاد الاتصال بالإنترنت';
+
+  @override
+  String get timeout_error => 'انتهت مهلة الاتصال';
+
+  @override
+  String get check_your_connection => 'تحقق من اتصالك وحاول مجدداً';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get oops => 'عذراً!';
 }

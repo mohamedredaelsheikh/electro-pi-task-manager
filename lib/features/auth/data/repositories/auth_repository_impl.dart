@@ -22,9 +22,13 @@ class AuthRepositoryImpl implements AuthRepository {
     final normEmail = email.trim().toLowerCase();
 
     // Locally-registered users (via register()) live only in local storage.
-    // Re-issue a token so isLoggedIn is true after re-login.
+    // Validate the stored password before re-issuing a token.
     final cached = _local.getCachedUser();
     if (cached != null && cached.email == normEmail) {
+      final storedPassword = _local.getCachedPassword();
+      if (storedPassword != password) {
+        return const ApiFailure(AuthFailure('Incorrect password.'));
+      }
       await _local.cacheUser(cached, _fakeToken(cached.id));
       return ApiSuccess(cached);
     }
@@ -59,6 +63,7 @@ class AuthRepositoryImpl implements AuthRepository {
       email: normEmail,
     );
     await _local.cacheUser(user, _fakeToken(user.id));
+    await _local.cachePassword(password);
     return ApiSuccess(user);
   }
 

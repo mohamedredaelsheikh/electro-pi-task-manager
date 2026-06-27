@@ -18,9 +18,10 @@ class AuthRemoteDataSource {
         'select': 'id,firstName,lastName,email',
       },
       fromJson: (data) {
-        final users = ((data as Map<String, dynamic>)['users'] as List)
-            .cast<Map<String, dynamic>>();
-        if (users.isEmpty) return null;
+        if (data is! Map<String, dynamic>) return null;
+        final users = (data['users'] as List?)
+            ?.cast<Map<String, dynamic>>();
+        if (users == null || users.isEmpty) return null;
         final u = users.first;
         return UserModel(
           id: u['id'] as int,

@@ -39,6 +39,8 @@ import '../../features/settings/domain/usecases/get_theme_mode_usecase.dart';
 import '../../features/settings/domain/usecases/set_locale_usecase.dart';
 import '../../features/settings/domain/usecases/set_theme_mode_usecase.dart';
 import '../../features/settings/presentation/cubit/settings_cubit.dart';
+import '../../features/Localization/data/services/lang_service.dart';
+import '../../features/Localization/presentation/logic/lang_cubit/lang_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -138,7 +140,7 @@ Future<void> configureDependencies() async {
       getTasks: sl(),
       updateStatus: sl(),
       createTask: sl(),
-      projectsCubit: sl(),
+      onStatusChanged: sl<ProjectsCubit>().updateProjectStatus,
     ),
   );
 
@@ -161,6 +163,15 @@ Future<void> configureDependencies() async {
       getLocale: sl(),
       setLocale: sl(),
     ),
+    dispose: (cubit) => cubit.close(),
+  );
+
+  // Localization — data
+  sl.registerLazySingleton(() => LangService(prefs: sl()));
+
+  // Localization — presentation (singleton so locale state is shared app-wide)
+  sl.registerLazySingleton(
+    () => LangCubit(langService: sl()),
     dispose: (cubit) => cubit.close(),
   );
 }

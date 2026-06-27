@@ -11,10 +11,12 @@ import 'package:electro_pi_task_manager/features/auth/domain/usecases/register_u
 import 'package:electro_pi_task_manager/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:electro_pi_task_manager/features/profile/domain/repositories/profile_repository.dart';
 import 'package:electro_pi_task_manager/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:electro_pi_task_manager/features/projects/data/datasources/projects_local_datasource.dart';
 import 'package:electro_pi_task_manager/features/projects/data/datasources/projects_remote_datasource.dart';
 import 'package:electro_pi_task_manager/features/projects/domain/repositories/projects_repository.dart';
 import 'package:electro_pi_task_manager/features/projects/domain/usecases/get_projects_usecase.dart';
 import 'package:electro_pi_task_manager/features/projects/presentation/cubit/projects_cubit.dart';
+import 'package:electro_pi_task_manager/features/tasks/data/datasources/tasks_local_datasource.dart';
 import 'package:electro_pi_task_manager/features/tasks/data/datasources/tasks_remote_datasource.dart';
 import 'package:electro_pi_task_manager/features/tasks/domain/repositories/tasks_repository.dart';
 import 'package:electro_pi_task_manager/features/tasks/domain/usecases/create_task_usecase.dart';
@@ -39,7 +41,12 @@ class MockAuthLocalDataSource extends Mock implements AuthLocalDataSource {}
 class MockProjectsRemoteDataSource extends Mock
     implements ProjectsRemoteDataSource {}
 
+class MockProjectsLocalDataSource extends Mock
+    implements ProjectsLocalDataSource {}
+
 class MockTasksRemoteDataSource extends Mock implements TasksRemoteDataSource {}
+
+class MockTasksLocalDataSource extends Mock implements TasksLocalDataSource {}
 
 class MockTokenStorage extends Mock implements TokenStorage {}
 

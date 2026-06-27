@@ -71,15 +71,15 @@ class TasksRepositoryImpl implements TasksRepository {
 
     // DummyJSON does not persist POSTs. Assign a unique negative local ID so
     // the task survives navigation and skips PATCH calls via taskId < 0 guard.
-    final cached = _local.getTasks(projectId) ?? [];
-    final negCount = cached.where((t) => t.id < 0).length;
+    // Microsecond timestamp gives a collision-free ID even under rapid creation.
     final localTask = TaskModel(
-      id: -(negCount + 1),
+      id: -DateTime.now().microsecondsSinceEpoch,
       userId: projectId,
       title: title,
       status: TaskStatus.pending,
       priority: priority,
     );
+    final cached = _local.getTasks(projectId) ?? [];
     await _local.saveTasks(
       projectId,
       [localTask, ...cached.whereType<TaskModel>()],

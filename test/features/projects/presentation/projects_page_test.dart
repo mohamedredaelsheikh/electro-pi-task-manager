@@ -1,21 +1,39 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:electro_pi_task_manager/core/language/app_localizations.dart';
 import 'package:electro_pi_task_manager/features/projects/presentation/cubit/projects_cubit.dart';
 import 'package:electro_pi_task_manager/features/projects/presentation/cubit/projects_state.dart';
 import 'package:electro_pi_task_manager/features/projects/presentation/pages/projects_page.dart';
 import 'package:electro_pi_task_manager/features/projects/presentation/widgets/project_card.dart';
+import 'package:electro_pi_task_manager/features/projects/presentation/widgets/project_card_shimmer.dart';
 
 import '../../../helpers/mocks.dart';
 import '../../../helpers/test_data.dart';
 
 Widget _buildApp(MockProjectsCubit cubit) {
-  return BlocProvider<ProjectsCubit>.value(
-    value: cubit,
-    child: const MaterialApp(home: ProjectsPage()),
+  return ScreenUtilInit(
+    designSize: const Size(402, 874),
+    builder: (context, child) => BlocProvider<ProjectsCubit>.value(
+      value: cubit,
+      child: MaterialApp(
+        localizationsDelegates: S.localizationsDelegates,
+        supportedLocales: S.supportedLocales,
+        home: const ProjectsPage(),
+      ),
+    ),
   );
+}
+
+Future<void> pumpPage(WidgetTester tester, MockProjectsCubit cubit) async {
+  tester.view.physicalSize = const Size(402 * 2, 874 * 2);
+  tester.view.devicePixelRatio = 2;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(_buildApp(cubit));
+  await tester.pump();
 }
 
 void main() {
@@ -23,14 +41,14 @@ void main() {
 
   setUp(() => mockCubit = MockProjectsCubit());
 
-  testWidgets('shows loading indicator for ProjectsLoading', (tester) async {
+  testWidgets('shows shimmer list for ProjectsLoading', (tester) async {
     whenListen<ProjectsState>(
       mockCubit,
       Stream<ProjectsState>.empty(),
       initialState: const ProjectsLoading(),
     );
-    await tester.pumpWidget(_buildApp(mockCubit));
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    await pumpPage(tester, mockCubit);
+    expect(find.byType(ProjectsShimmerList), findsOneWidget);
   });
 
   testWidgets('shows empty state widget when list is empty', (tester) async {
@@ -39,7 +57,7 @@ void main() {
       Stream<ProjectsState>.empty(),
       initialState: const ProjectsLoaded([]),
     );
-    await tester.pumpWidget(_buildApp(mockCubit));
+    await pumpPage(tester, mockCubit);
     expect(find.text('No projects yet'), findsOneWidget);
   });
 
@@ -50,7 +68,7 @@ void main() {
       Stream<ProjectsState>.empty(),
       initialState: const ProjectsLoaded(projects),
     );
-    await tester.pumpWidget(_buildApp(mockCubit));
+    await pumpPage(tester, mockCubit);
     expect(find.byType(ProjectCard), findsNWidgets(projects.length));
     expect(find.text(tProject.title), findsOneWidget);
   });
@@ -61,7 +79,7 @@ void main() {
       Stream<ProjectsState>.empty(),
       initialState: const ProjectsError('Something went wrong'),
     );
-    await tester.pumpWidget(_buildApp(mockCubit));
+    await pumpPage(tester, mockCubit);
     expect(find.text('Something went wrong'), findsOneWidget);
     expect(find.text('Retry'), findsOneWidget);
   });
@@ -73,7 +91,7 @@ void main() {
       Stream<ProjectsState>.empty(),
       initialState: const ProjectsError('err'),
     );
-    await tester.pumpWidget(_buildApp(mockCubit));
+    await pumpPage(tester, mockCubit);
     await tester.tap(find.text('Retry'));
     await tester.pump();
     verify(() => mockCubit.loadProjects()).called(1);

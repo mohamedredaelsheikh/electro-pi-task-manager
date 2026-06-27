@@ -67,5 +67,13 @@
   "themeDark": "Dark",
   "themeSystem": "System",
   "chooseAppearance": "Choose Appearance",
-  "darkMode": "Dark Mode"
+  "darkMode": "Dark Mode",
+
+  "languages": "Language",
+  "no_internet_connection": "No internet connection",
+  "back_online": "You're back online",
+  "timeout_error": "Connection timed out",
+  "check_your_connection": "Check your connection and try again",
+  "retry": "Retry",
+  "oops": "Oops!"
 }

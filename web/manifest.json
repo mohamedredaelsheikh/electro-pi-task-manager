@@ -1,6 +1,6 @@
 {
-    "name": "electro_pi_task_manager",
-    "short_name": "electro_pi_task_manager",
+    "name": "Task Manager",
+    "short_name": "Task Manager",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

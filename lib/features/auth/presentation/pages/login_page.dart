@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/localization.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../core/widgets/toast.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../widgets/auth_text_field.dart';
@@ -47,12 +48,7 @@ class _LoginPageState extends State<LoginPage> {
           if (state is AuthAuthenticated) {
             context.go(AppRoutes.projects);
           } else if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: colorScheme.error,
-              ),
-            );
+            Toaster.showToast(description: state.message);
           }
         },
         child: Container(
@@ -90,9 +86,11 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        context.getLang.noAccount,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                      Flexible(
+                        child: Text(
+                          context.getLang.noAccount,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
                       ),
                       TextButton(
                         onPressed: () => context.push(AppRoutes.register),
@@ -208,8 +206,10 @@ class _LoginCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 10.w),
-                Text(lang.staySignedIn,
-                    style: Theme.of(context).textTheme.bodyMedium),
+                Expanded(
+                  child: Text(lang.staySignedIn,
+                      style: Theme.of(context).textTheme.bodyMedium),
+                ),
               ],
             ),
             SizedBox(height: 24.h),
@@ -262,26 +262,30 @@ class _Footer extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                textStyle: labelStyle,
+            Flexible(
+              child: TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  textStyle: labelStyle,
+                ),
+                child: Text(lang.privacyPolicy),
               ),
-              child: Text(lang.privacyPolicy),
             ),
             Text('•', style: labelStyle),
-            TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                textStyle: labelStyle,
+            Flexible(
+              child: TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  textStyle: labelStyle,
+                ),
+                child: Text(lang.termsOfService),
               ),
-              child: Text(lang.termsOfService),
             ),
           ],
         ),

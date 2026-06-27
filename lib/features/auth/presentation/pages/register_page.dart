@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/localization.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../core/widgets/toast.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../widgets/auth_text_field.dart';
@@ -35,9 +36,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     if (!_termsAccepted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.getLang.termsRequired)),
-      );
+      Toaster.showToast(description: context.getLang.termsRequired);
       return;
     }
     context.read<AuthCubit>().register(
@@ -56,12 +55,7 @@ class _RegisterPageState extends State<RegisterPage> {
           if (state is AuthAuthenticated) {
             context.go(AppRoutes.projects);
           } else if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: colorScheme.error,
-              ),
-            );
+            Toaster.showToast(description: state.message);
           }
         },
         child: Container(
@@ -297,7 +291,7 @@ class _RegisterCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(lang.alreadyHaveAccount, style: bodyStyle),
+                Flexible(child: Text(lang.alreadyHaveAccount, style: bodyStyle)),
                 TextButton(
                   onPressed: onSignIn,
                   child: Text(

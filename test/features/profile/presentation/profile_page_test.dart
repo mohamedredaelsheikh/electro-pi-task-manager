@@ -1,8 +1,10 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:electro_pi_task_manager/core/language/app_localizations.dart';
 import 'package:electro_pi_task_manager/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:electro_pi_task_manager/features/auth/presentation/cubit/auth_state.dart';
 import 'package:electro_pi_task_manager/features/profile/presentation/cubit/profile_cubit.dart';
@@ -13,13 +15,32 @@ import '../../../helpers/mocks.dart';
 import '../../../helpers/test_data.dart';
 
 Widget _buildApp(MockProfileCubit profileCubit, MockAuthCubit authCubit) {
-  return MultiBlocProvider(
-    providers: [
-      BlocProvider<ProfileCubit>.value(value: profileCubit),
-      BlocProvider<AuthCubit>.value(value: authCubit),
-    ],
-    child: const MaterialApp(home: ProfilePage()),
+  return ScreenUtilInit(
+    designSize: const Size(402, 874),
+    builder: (context, child) => MultiBlocProvider(
+      providers: [
+        BlocProvider<ProfileCubit>.value(value: profileCubit),
+        BlocProvider<AuthCubit>.value(value: authCubit),
+      ],
+      child: MaterialApp(
+        localizationsDelegates: S.localizationsDelegates,
+        supportedLocales: S.supportedLocales,
+        home: const ProfilePage(),
+      ),
+    ),
   );
+}
+
+Future<void> pumpPage(
+  WidgetTester tester,
+  MockProfileCubit profileCubit,
+  MockAuthCubit authCubit,
+) async {
+  tester.view.physicalSize = const Size(402 * 2, 874 * 2);
+  tester.view.devicePixelRatio = 2;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(_buildApp(profileCubit, authCubit));
+  await tester.pump();
 }
 
 void main() {
@@ -42,7 +63,7 @@ void main() {
       Stream<ProfileState>.empty(),
       initialState: const ProfileLoaded(tUser),
     );
-    await tester.pumpWidget(_buildApp(mockProfile, mockAuth));
+    await pumpPage(tester, mockProfile, mockAuth);
     expect(find.text(tUser.name), findsWidgets);
     expect(find.text(tUser.email), findsWidgets);
   });
@@ -53,7 +74,7 @@ void main() {
       Stream<ProfileState>.empty(),
       initialState: const ProfileError('Profile not found'),
     );
-    await tester.pumpWidget(_buildApp(mockProfile, mockAuth));
+    await pumpPage(tester, mockProfile, mockAuth);
     expect(find.text('Profile not found'), findsOneWidget);
   });
 
@@ -64,8 +85,8 @@ void main() {
       Stream<ProfileState>.empty(),
       initialState: const ProfileLoaded(tUser),
     );
-    await tester.pumpWidget(_buildApp(mockProfile, mockAuth));
-    await tester.tap(find.text('Logout'));
+    await pumpPage(tester, mockProfile, mockAuth);
+    await tester.tap(find.text('Sign Out'));
     await tester.pump();
     verify(() => mockAuth.logout()).called(1);
   });

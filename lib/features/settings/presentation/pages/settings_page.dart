@@ -3,8 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/extensions/localization.dart';
+import '../../../../core/extensions/show_default_sheet.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/section_label.dart';
+import '../../../../features/Localization/presentation/logic/lang_cubit/lang_cubit.dart';
+import '../../../../features/Localization/presentation/widgets/language_sheet.dart';
 import '../../domain/enums/app_theme_mode.dart';
 import '../cubit/settings_cubit.dart';
 
@@ -17,6 +20,7 @@ class SettingsPage extends StatelessWidget {
     final cubit = context.read<SettingsCubit>();
     final themeMode = context.watch<SettingsCubit>().state.themeMode;
     final isDark = themeMode == AppThemeMode.dark;
+    final currentLanguage = context.watch<LangCubit>().state.currentLanguage;
 
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
@@ -51,6 +55,28 @@ class SettingsPage extends StatelessWidget {
                         : colorScheme.outlineVariant,
                   ),
                   trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                ),
+              ),
+              Divider(
+                height: 1,
+                indent: 16.w,
+                endIndent: 16.w,
+                color: colorScheme.outlineVariant,
+              ),
+              _SettingRow(
+                icon: Icons.language_outlined,
+                label: lang.languages,
+                subtitle: currentLanguage.nativeName,
+                trailing: Icon(
+                  Icons.chevron_right_rounded,
+                  color: colorScheme.onSurfaceVariant,
+                  size: 20.r,
+                ),
+                onTap: () => context.showDefaultSheet(
+                  child: BlocProvider.value(
+                    value: context.read<LangCubit>(),
+                    child: const LanguageSheet(),
+                  ),
                 ),
               ),
             ],
@@ -104,64 +130,69 @@ class _SettingRow extends StatelessWidget {
   final String label;
   final String? subtitle;
   final Widget? trailing;
+  final VoidCallback? onTap;
 
   const _SettingRow({
     required this.icon,
     required this.label,
     this.subtitle,
     this.trailing,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: EdgeInsets.all(16.r),
-      child: Row(
-        children: [
-          Container(
-            width: 40.r,
-            height: 40.r,
-            decoration: BoxDecoration(
-              color: colorScheme.primary.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(10.r),
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.all(16.r),
+        child: Row(
+          children: [
+            Container(
+              width: 40.r,
+              height: 40.r,
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: Icon(icon, color: colorScheme.primary, size: 20.r),
             ),
-            child: Icon(icon, color: colorScheme.primary, size: 20.r),
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurfaceVariant,
-                    letterSpacing: 0.6,
-                  ),
-                ),
-                if (subtitle != null) ...[
-                  SizedBox(height: 2.h),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    subtitle!,
+                    label,
                     style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                      color: colorScheme.onSurface,
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurfaceVariant,
+                      letterSpacing: 0.6,
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
+                  if (subtitle != null) ...[
+                    SizedBox(height: 2.h),
+                    Text(
+                      subtitle!,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: colorScheme.onSurface,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-          if (trailing != null) ...[
-            SizedBox(width: 8.w),
-            trailing!,
+            if (trailing != null) ...[
+              SizedBox(width: 8.w),
+              trailing!,
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

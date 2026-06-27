@@ -22,6 +22,7 @@ void main() {
 
   group('login', () {
     test('returns ApiSuccess and caches user on remote success', () async {
+      when(() => mockLocal.getCachedUser()).thenReturn(null);
       when(() => mockRemote.findUserByEmail(any()))
           .thenAnswer((_) async => const ApiSuccess(tUserModel));
       when(() => mockLocal.cacheUser(any(), any()))
@@ -35,6 +36,7 @@ void main() {
     });
 
     test('returns ApiFailure when remote fails', () async {
+      when(() => mockLocal.getCachedUser()).thenReturn(null);
       when(() => mockRemote.findUserByEmail(any()))
           .thenAnswer((_) async => const ApiFailure(AuthFailure('Not found')));
 
@@ -44,12 +46,25 @@ void main() {
       verifyNever(() => mockLocal.cacheUser(any(), any()));
     });
 
+    test('validates password for locally-registered users', () async {
+      when(() => mockLocal.getCachedUser())
+          .thenReturn(const UserModel(id: 99, name: 'Local', email: 'local@test.com'));
+      when(() => mockLocal.getCachedPassword()).thenReturn('correct');
+      when(() => mockLocal.cacheUser(any(), any())).thenAnswer((_) async {});
+
+      final ok = await repo.login(email: 'local@test.com', password: 'correct');
+      expect(ok.isSuccess, isTrue);
+
+      final fail = await repo.login(email: 'local@test.com', password: 'wrong');
+      expect(fail.isSuccess, isFalse);
+    });
   });
 
   group('register', () {
     test('caches new user and returns ApiSuccess', () async {
       when(() => mockLocal.getCachedUser()).thenReturn(null);
       when(() => mockLocal.cacheUser(any(), any())).thenAnswer((_) async {});
+      when(() => mockLocal.cachePassword(any())).thenAnswer((_) async {});
 
       final result = await repo.register(
         name: 'New User',
@@ -63,6 +78,7 @@ void main() {
       expect(user.name, 'New User');
       expect(user.email, 'new@test.com');
       verify(() => mockLocal.cacheUser(any(), any())).called(1);
+      verify(() => mockLocal.cachePassword('password')).called(1);
     });
 
     test('returns AuthFailure when email matches cached user', () async {

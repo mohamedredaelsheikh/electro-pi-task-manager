@@ -19,8 +19,12 @@ class TaskModel extends Task {
       id: id,
       userId: json['userId'] as int? ?? 0,
       title: (json['todo'] ?? json['title']) as String,
-      status: completed ? TaskStatus.done : TaskStatus.pending,
-      priority: _parsePriority(json['priority'] as String? ?? 'medium'),
+      status: completed
+          ? TaskStatus.done
+          : (id % 2 == 0 ? TaskStatus.inProgress : TaskStatus.pending),
+      priority: json['priority'] != null
+          ? _parsePriority(json['priority'] as String)
+          : _derivePriority(id),
     );
   }
 
@@ -35,6 +39,12 @@ class TaskModel extends Task {
   static TaskPriority _parsePriority(String value) => switch (value) {
         'high' => TaskPriority.high,
         'low' => TaskPriority.low,
+        _ => TaskPriority.medium,
+      };
+
+  static TaskPriority _derivePriority(int id) => switch (id % 3) {
+        0 => TaskPriority.high,
+        2 => TaskPriority.low,
         _ => TaskPriority.medium,
       };
 }

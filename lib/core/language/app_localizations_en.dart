@@ -193,4 +193,25 @@ class SEn extends S {
 
   @override
   String get darkMode => 'Dark Mode';
+
+  @override
+  String get languages => 'Language';
+
+  @override
+  String get no_internet_connection => 'No internet connection';
+
+  @override
+  String get back_online => 'You\'re back online';
+
+  @override
+  String get timeout_error => 'Connection timed out';
+
+  @override
+  String get check_your_connection => 'Check your connection and try again';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get oops => 'Oops!';
 }

@@ -163,16 +163,17 @@ class _ProgressCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text(
-                '$pct% Complete',
-                style: TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w700,
-                  color: colorScheme.onSurface,
-                  letterSpacing: -0.2,
+              Expanded(
+                child: Text(
+                  '$pct% Complete',
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.onSurface,
+                    letterSpacing: -0.2,
+                  ),
                 ),
               ),
-              const Spacer(),
               Text(
                 '$done / $total tasks done',
                 style: TextStyle(

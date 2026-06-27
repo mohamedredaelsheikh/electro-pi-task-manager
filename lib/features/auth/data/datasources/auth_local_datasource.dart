@@ -14,6 +14,11 @@ class AuthLocalDataSource {
     );
   }
 
+  Future<void> cachePassword(String password) =>
+      _storage.savePassword(password);
+
+  String? getCachedPassword() => _storage.getPassword();
+
   UserModel? getCachedUser() {
     final id = _storage.getUserId();
     final name = _storage.getUserName();

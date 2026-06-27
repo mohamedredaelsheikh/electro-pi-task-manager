@@ -6,17 +6,17 @@ void main() {
   group('ProjectModel.fromJson', () {
     Map<String, dynamic> makeJson(int id) => {
           'id': id,
-          'userId': 1,
-          'title': 'Title $id',
-          'body': 'Body $id',
+          'firstName': 'First$id',
+          'lastName': 'Last$id',
+          'email': 'user$id@example.com',
         };
 
-    test('maps id, userId, title, and body to description', () {
+    test('maps id, firstName+lastName to title, and email to description', () {
       final model = ProjectModel.fromJson(makeJson(4));
       expect(model.id, 4);
-      expect(model.userId, 1);
-      expect(model.title, 'Title 4');
-      expect(model.description, 'Body 4');
+      expect(model.userId, 4);
+      expect(model.title, 'First4 Last4');
+      expect(model.description, 'user4@example.com');
     });
 
     test('id % 3 == 0 → done', () {

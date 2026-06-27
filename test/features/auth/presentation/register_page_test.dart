@@ -1,8 +1,11 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:toastification/toastification.dart';
+import 'package:electro_pi_task_manager/core/language/app_localizations.dart';
 import 'package:electro_pi_task_manager/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:electro_pi_task_manager/features/auth/presentation/cubit/auth_state.dart';
 import 'package:electro_pi_task_manager/features/auth/presentation/pages/register_page.dart';
@@ -10,10 +13,27 @@ import 'package:electro_pi_task_manager/features/auth/presentation/pages/registe
 import '../../../helpers/mocks.dart';
 
 Widget _buildApp(MockAuthCubit cubit) {
-  return BlocProvider<AuthCubit>.value(
-    value: cubit,
-    child: const MaterialApp(home: RegisterPage()),
+  return ScreenUtilInit(
+    designSize: const Size(402, 874),
+    builder: (context, child) => BlocProvider<AuthCubit>.value(
+      value: cubit,
+      child: MaterialApp(
+        localizationsDelegates: S.localizationsDelegates,
+        supportedLocales: S.supportedLocales,
+        builder: (context, child) =>
+            ToastificationWrapper(child: child ?? const SizedBox()),
+        home: const RegisterPage(),
+      ),
+    ),
   );
+}
+
+Future<void> pumpPage(WidgetTester tester, MockAuthCubit cubit) async {
+  tester.view.physicalSize = const Size(402 * 2, 874 * 2);
+  tester.view.devicePixelRatio = 2;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(_buildApp(cubit));
+  await tester.pump();
 }
 
 void main() {
@@ -28,34 +48,26 @@ void main() {
     );
   });
 
-  testWidgets('renders all four form fields', (tester) async {
-    await tester.pumpWidget(_buildApp(mockCubit));
-    expect(find.widgetWithText(TextFormField, 'Full name'), findsOneWidget);
-    expect(find.widgetWithText(TextFormField, 'Email'), findsOneWidget);
-    expect(find.widgetWithText(TextFormField, 'Password'), findsOneWidget);
-    expect(find.widgetWithText(TextFormField, 'Confirm password'), findsOneWidget);
+  testWidgets('renders three form fields', (tester) async {
+    await pumpPage(tester, mockCubit);
+    expect(find.byType(TextFormField), findsNWidgets(3));
   });
 
   testWidgets('shows error when name is empty', (tester) async {
-    await tester.pumpWidget(_buildApp(mockCubit));
-    await tester.tap(find.widgetWithText(FilledButton, 'Create account'));
+    await pumpPage(tester, mockCubit);
+    await tester.tap(find.widgetWithText(FilledButton, 'Sign Up'));
     await tester.pump();
     expect(find.text('Name is required'), findsOneWidget);
   });
 
-  testWidgets('shows error when passwords do not match', (tester) async {
-    await tester.pumpWidget(_buildApp(mockCubit));
-    await tester.enterText(
-        find.widgetWithText(TextFormField, 'Full name'), 'Alice');
-    await tester.enterText(
-        find.widgetWithText(TextFormField, 'Email'), 'alice@x.com');
-    await tester.enterText(
-        find.widgetWithText(TextFormField, 'Password'), 'password1');
-    await tester.enterText(
-        find.widgetWithText(TextFormField, 'Confirm password'), 'password2');
-    await tester.tap(find.widgetWithText(FilledButton, 'Create account'));
+  testWidgets('shows error when password is too short', (tester) async {
+    await pumpPage(tester, mockCubit);
+    await tester.enterText(find.byType(TextFormField).first, 'Alice');
+    await tester.enterText(find.byType(TextFormField).at(1), 'alice@x.com');
+    await tester.enterText(find.byType(TextFormField).at(2), 'short');
+    await tester.tap(find.widgetWithText(FilledButton, 'Sign Up'));
     await tester.pump();
-    expect(find.text('Passwords do not match'), findsOneWidget);
+    expect(find.text('Password must be at least 8 characters'), findsOneWidget);
   });
 
   testWidgets('calls AuthCubit.register on valid submit', (tester) async {
@@ -65,22 +77,19 @@ void main() {
           password: any(named: 'password'),
         )).thenAnswer((_) async {});
 
-    await tester.pumpWidget(_buildApp(mockCubit));
-    await tester.enterText(
-        find.widgetWithText(TextFormField, 'Full name'), 'Alice');
-    await tester.enterText(
-        find.widgetWithText(TextFormField, 'Email'), 'alice@x.com');
-    await tester.enterText(
-        find.widgetWithText(TextFormField, 'Password'), 'secret1');
-    await tester.enterText(
-        find.widgetWithText(TextFormField, 'Confirm password'), 'secret1');
-    await tester.tap(find.widgetWithText(FilledButton, 'Create account'));
+    await pumpPage(tester, mockCubit);
+    await tester.enterText(find.byType(TextFormField).first, 'Alice');
+    await tester.enterText(find.byType(TextFormField).at(1), 'alice@x.com');
+    await tester.enterText(find.byType(TextFormField).at(2), 'Secret1!');
+    await tester.tap(find.byType(Checkbox));
+    await tester.pump();
+    await tester.tap(find.widgetWithText(FilledButton, 'Sign Up'));
     await tester.pump();
 
     verify(() => mockCubit.register(
           name: 'Alice',
           email: 'alice@x.com',
-          password: 'secret1',
+          password: 'Secret1!',
         )).called(1);
   });
 
@@ -90,8 +99,12 @@ void main() {
       Stream.fromIterable([const AuthError('Email taken')]),
       initialState: const AuthUnauthenticated(),
     );
-    await tester.pumpWidget(_buildApp(mockCubit));
-    await tester.pump();
-    expect(find.text('Email taken'), findsOneWidget);
+    await pumpPage(tester, mockCubit); // pumpWidget + pump (BlocListener → toastification.show() → overlay.insert)
+    await tester.pump(); // renders OverlayEntry → AnimatedList built
+    await tester.pump(const Duration(milliseconds: 200)); // clock +200ms → Future.delayed(100ms) fires → insertItem
+    await tester.pump(); // renders toast (SlideTransition starts off-screen → skipOffstage: false)
+    expect(find.text('Email taken', skipOffstage: false), findsOneWidget);
+    // Flush auto-close timer (4s) and overlay removal timer (0.65s)
+    await tester.pump(const Duration(seconds: 5));
   });
 }

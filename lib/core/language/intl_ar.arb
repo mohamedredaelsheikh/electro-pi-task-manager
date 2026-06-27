@@ -67,5 +67,13 @@
   "themeDark": "داكن",
   "themeSystem": "النظام",
   "chooseAppearance": "اختر المظهر",
-  "darkMode": "الوضع الداكن"
+  "darkMode": "الوضع الداكن",
+
+  "languages": "اللغة",
+  "no_internet_connection": "لا يوجد اتصال بالإنترنت",
+  "back_online": "عاد الاتصال بالإنترنت",
+  "timeout_error": "انتهت مهلة الاتصال",
+  "check_your_connection": "تحقق من اتصالك وحاول مجدداً",
+  "retry": "إعادة المحاولة",
+  "oops": "عذراً!"
 }

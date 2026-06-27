@@ -5,6 +5,7 @@ class TokenStorage {
   static const _userIdKey = 'user_id';
   static const _userNameKey = 'user_name';
   static const _userEmailKey = 'user_email';
+  static const _passwordKey = 'user_password';
 
   final SharedPreferences _prefs;
   const TokenStorage(this._prefs);
@@ -29,6 +30,10 @@ class TokenStorage {
   int? getUserId() => _prefs.getInt(_userIdKey);
   String? getUserName() => _prefs.getString(_userNameKey);
   String? getUserEmail() => _prefs.getString(_userEmailKey);
+
+  Future<void> savePassword(String password) =>
+      _prefs.setString(_passwordKey, password);
+  String? getPassword() => _prefs.getString(_passwordKey);
 
   // Clears the session token only — user profile data is kept so re-login works
   // for locally-registered users (DummyJSON is read-only, no server-side accounts).

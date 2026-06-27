@@ -12,44 +12,66 @@ import '../../../helpers/mocks.dart';
 void main() {
   late TasksRepositoryImpl repo;
   late MockTasksRemoteDataSource mockRemote;
-  late MockTokenStorage mockStorage;
+  late MockTasksLocalDataSource mockLocal;
+
+  setUpAll(() {
+    registerFallbackValue(TaskStatus.pending);
+    registerFallbackValue(TaskPriority.medium);
+    registerFallbackValue(<TaskModel>[]);
+    registerFallbackValue(<String, dynamic>{});
+  });
 
   setUp(() {
     mockRemote = MockTasksRemoteDataSource();
-    mockStorage = MockTokenStorage();
-    repo = TasksRepositoryImpl(mockRemote, mockStorage);
+    mockLocal = MockTasksLocalDataSource();
+    repo = TasksRepositoryImpl(mockRemote, mockLocal);
   });
 
-  const taskModel = TaskModel(id: 11, userId: 1, title: 'T11', status: TaskStatus.pending, priority: TaskPriority.low);
-  const taskModel2 = TaskModel(id: 22, userId: 1, title: 'T22', status: TaskStatus.pending, priority: TaskPriority.high);
+  const taskModel = TaskModel(
+    id: 11,
+    userId: 1,
+    title: 'T11',
+    status: TaskStatus.pending,
+    priority: TaskPriority.low,
+  );
 
   group('getTasksByProject', () {
-    test('filters todos by id % 10 == projectId % 10', () async {
-      when(() => mockStorage.getUserId()).thenReturn(1);
-      when(() => mockRemote.getUserTodos(1))
-          .thenAnswer((_) async => ApiSuccess([taskModel, taskModel2]));
+    test('calls remote with projectId and merges local-only tasks on success', () async {
+      const localTask = TaskModel(
+        id: -1,
+        userId: 1,
+        title: 'Local',
+        status: TaskStatus.pending,
+        priority: TaskPriority.medium,
+      );
+      when(() => mockRemote.getTasksByProject(1))
+          .thenAnswer((_) async => const ApiSuccess([taskModel]));
+      when(() => mockLocal.getTasks(1)).thenReturn([localTask]);
+      when(() => mockLocal.saveTasks(any(), any())).thenAnswer((_) async {});
 
-      // projectId=1 → filter: id%10==1 → only taskModel (11%10=1)
       final result = await repo.getTasksByProject(1);
 
       expect(result.isSuccess, isTrue);
-      expect(result.data.length, 1);
+      expect(result.data.length, 2);
+      expect(result.data.first.id, -1);
+      verify(() => mockRemote.getTasksByProject(1)).called(1);
+    });
+
+    test('returns cached tasks on NetworkFailure', () async {
+      when(() => mockRemote.getTasksByProject(any()))
+          .thenAnswer((_) async => const ApiFailure(NetworkFailure()));
+      when(() => mockLocal.getTasks(1)).thenReturn([taskModel]);
+
+      final result = await repo.getTasksByProject(1);
+
+      expect(result.isSuccess, isTrue);
       expect(result.data.first.id, 11);
     });
 
-    test('clamps userId > 10 to 1', () async {
-      when(() => mockStorage.getUserId()).thenReturn(99999);
-      when(() => mockRemote.getUserTodos(1))
-          .thenAnswer((_) async => const ApiSuccess([]));
-
-      await repo.getTasksByProject(1);
-      verify(() => mockRemote.getUserTodos(1)).called(1);
-    });
-
-    test('propagates failure', () async {
-      when(() => mockStorage.getUserId()).thenReturn(1);
-      when(() => mockRemote.getUserTodos(any()))
+    test('propagates NetworkFailure when no cache exists', () async {
+      when(() => mockRemote.getTasksByProject(any()))
           .thenAnswer((_) async => const ApiFailure(NetworkFailure()));
+      when(() => mockLocal.getTasks(any())).thenReturn(null);
 
       final result = await repo.getTasksByProject(1);
       expect(result.isSuccess, isFalse);
@@ -57,34 +79,92 @@ void main() {
   });
 
   group('updateTaskStatus', () {
-    test('applies provided status locally on success', () async {
-      const returned = TaskModel(id: 1, userId: 1, title: 'T', status: TaskStatus.pending, priority: TaskPriority.low);
-      when(() => mockRemote.updateTodo(1, any()))
+    test('calls remote and applies status override on success', () async {
+      const returned = TaskModel(
+        id: 1,
+        userId: 1,
+        title: 'T',
+        status: TaskStatus.pending,
+        priority: TaskPriority.low,
+      );
+      when(() => mockRemote.updateTask(1, any()))
           .thenAnswer((_) async => const ApiSuccess(returned));
+      when(() => mockLocal.getTasks(1)).thenReturn([returned]);
+      when(() => mockLocal.saveTasks(any(), any())).thenAnswer((_) async {});
 
-      final result = await repo.updateTaskStatus(1, TaskStatus.done);
+      final result = await repo.updateTaskStatus(1, TaskStatus.done, 1);
 
       expect(result.isSuccess, isTrue);
       expect(result.data.status, TaskStatus.done);
+      verify(() => mockRemote.updateTask(1, {'completed': true})).called(1);
     });
 
-    test('propagates failure', () async {
-      when(() => mockRemote.updateTodo(any(), any()))
+    test('updates local task in cache without calling remote', () async {
+      const localTask = TaskModel(
+        id: -1,
+        userId: 1,
+        title: 'Local',
+        status: TaskStatus.pending,
+        priority: TaskPriority.medium,
+      );
+      when(() => mockLocal.getTasks(1)).thenReturn([localTask]);
+      when(() => mockLocal.saveTasks(any(), any())).thenAnswer((_) async {});
+
+      final result = await repo.updateTaskStatus(-1, TaskStatus.done, 1);
+
+      expect(result.isSuccess, isTrue);
+      expect(result.data.status, TaskStatus.done);
+      verifyNever(() => mockRemote.updateTask(any(), any()));
+    });
+
+    test('propagates failure from remote', () async {
+      when(() => mockRemote.updateTask(any(), any()))
           .thenAnswer((_) async => const ApiFailure(NetworkFailure()));
 
-      final result = await repo.updateTaskStatus(1, TaskStatus.done);
+      final result = await repo.updateTaskStatus(1, TaskStatus.done, 1);
       expect(result.isSuccess, isFalse);
     });
   });
 
   group('createTask', () {
-    test('returns result from remote', () async {
-      when(() => mockStorage.getUserId()).thenReturn(1);
-      when(() => mockRemote.createTodo(userId: 1, title: 'New'))
-          .thenAnswer((_) async => const ApiSuccess(taskModel));
+    test('returns task with negative local id and saves to cache', () async {
+      when(() => mockRemote.createTask(
+            projectId: any(named: 'projectId'),
+            title: any(named: 'title'),
+            priority: any(named: 'priority'),
+          )).thenAnswer((_) async => const ApiSuccess(taskModel));
+      when(() => mockLocal.getTasks(any())).thenReturn([]);
+      when(() => mockLocal.saveTasks(any(), any())).thenAnswer((_) async {});
 
-      final result = await repo.createTask(title: 'New');
+      final result = await repo.createTask(title: 'New Task', projectId: 1);
+
       expect(result.isSuccess, isTrue);
+      expect(result.data.id, isNegative);
+      expect(result.data.title, 'New Task');
+    });
+
+    test('assigns unique negative ids for multiple local tasks', () async {
+      const existingLocal = TaskModel(
+        id: -1,
+        userId: 1,
+        title: 'Existing',
+        status: TaskStatus.pending,
+        priority: TaskPriority.medium,
+      );
+      when(() => mockRemote.createTask(
+            projectId: any(named: 'projectId'),
+            title: any(named: 'title'),
+            priority: any(named: 'priority'),
+          )).thenAnswer((_) async => const ApiSuccess(taskModel));
+      when(() => mockLocal.getTasks(any())).thenReturn([existingLocal]);
+      when(() => mockLocal.saveTasks(any(), any())).thenAnswer((_) async {});
+
+      final result = await repo.createTask(title: 'Second', projectId: 1);
+
+      expect(result.isSuccess, isTrue);
+      // ID must be negative and distinct from the existing local task (-1).
+      expect(result.data.id, isNegative);
+      expect(result.data.id, isNot(-1));
     });
   });
 }
