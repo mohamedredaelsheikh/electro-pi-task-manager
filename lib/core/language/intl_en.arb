@@ -75,5 +75,32 @@
   "timeout_error": "Connection timed out",
   "check_your_connection": "Check your connection and try again",
   "retry": "Retry",
-  "oops": "Oops!"
+  "oops": "Oops!",
+
+  "addTask": "Add Task",
+  "newTask": "New Task",
+  "noTasksYet": "No tasks yet",
+  "noTasksSubtitle": "Tap \"Add Task\" to create the first one.",
+  "todayLabel": "TODAY",
+  "progressLabel": "PROGRESS",
+
+  "taskName": "Task Name",
+  "enterTaskTitle": "Enter task title...",
+  "titleRequired": "Title is required",
+  "priority": "Priority",
+  "deadline": "Deadline",
+  "cancel": "Cancel",
+  "selectDate": "Select date",
+  "today": "Today",
+  "selectTime": "Select time",
+  "highPriority": "High Priority",
+  "mediumPriority": "Medium Priority",
+  "lowPriority": "Low Priority",
+
+  "priorityHigh": "HIGH",
+  "priorityMedium": "MEDIUM",
+  "priorityLow": "LOW",
+  "statusPending": "Pending",
+  "statusInProgress": "In Progress",
+  "statusDone": "Done"
 }

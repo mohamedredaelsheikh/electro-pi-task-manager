@@ -75,5 +75,32 @@
   "timeout_error": "انتهت مهلة الاتصال",
   "check_your_connection": "تحقق من اتصالك وحاول مجدداً",
   "retry": "إعادة المحاولة",
-  "oops": "عذراً!"
+  "oops": "عذراً!",
+
+  "addTask": "إضافة مهمة",
+  "newTask": "مهمة جديدة",
+  "noTasksYet": "لا توجد مهام بعد",
+  "noTasksSubtitle": "اضغط على \"إضافة مهمة\" للبدء.",
+  "todayLabel": "اليوم",
+  "progressLabel": "التقدم",
+
+  "taskName": "اسم المهمة",
+  "enterTaskTitle": "أدخل عنوان المهمة...",
+  "titleRequired": "العنوان مطلوب",
+  "priority": "الأولوية",
+  "deadline": "الموعد النهائي",
+  "cancel": "إلغاء",
+  "selectDate": "اختر تاريخاً",
+  "today": "اليوم",
+  "selectTime": "اختر وقتاً",
+  "highPriority": "أولوية عالية",
+  "mediumPriority": "أولوية متوسطة",
+  "lowPriority": "أولوية منخفضة",
+
+  "priorityHigh": "عالية",
+  "priorityMedium": "متوسطة",
+  "priorityLow": "منخفضة",
+  "statusPending": "قيد الانتظار",
+  "statusInProgress": "قيد التنفيذ",
+  "statusDone": "مكتمل"
 }

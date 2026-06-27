@@ -214,4 +214,76 @@ class SEn extends S {
 
   @override
   String get oops => 'Oops!';
+
+  @override
+  String get addTask => 'Add Task';
+
+  @override
+  String get newTask => 'New Task';
+
+  @override
+  String get noTasksYet => 'No tasks yet';
+
+  @override
+  String get noTasksSubtitle => 'Tap "Add Task" to create the first one.';
+
+  @override
+  String get todayLabel => 'TODAY';
+
+  @override
+  String get progressLabel => 'PROGRESS';
+
+  @override
+  String get taskName => 'Task Name';
+
+  @override
+  String get enterTaskTitle => 'Enter task title...';
+
+  @override
+  String get titleRequired => 'Title is required';
+
+  @override
+  String get priority => 'Priority';
+
+  @override
+  String get deadline => 'Deadline';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get selectDate => 'Select date';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get selectTime => 'Select time';
+
+  @override
+  String get highPriority => 'High Priority';
+
+  @override
+  String get mediumPriority => 'Medium Priority';
+
+  @override
+  String get lowPriority => 'Low Priority';
+
+  @override
+  String get priorityHigh => 'HIGH';
+
+  @override
+  String get priorityMedium => 'MEDIUM';
+
+  @override
+  String get priorityLow => 'LOW';
+
+  @override
+  String get statusPending => 'Pending';
+
+  @override
+  String get statusInProgress => 'In Progress';
+
+  @override
+  String get statusDone => 'Done';
 }

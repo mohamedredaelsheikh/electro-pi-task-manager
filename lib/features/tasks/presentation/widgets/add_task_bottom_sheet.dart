@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart' as intl;
 
+import '../../../../core/extensions/localization.dart';
 import '../../domain/enums/task_priority.dart';
 import '../cubit/tasks_cubit.dart';
 
@@ -66,23 +68,20 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
     if (picked != null) setState(() => _deadlineTime = picked);
   }
 
-  String get _dateLabel {
-    if (_deadline == null) return 'Select date';
+  String _dateLabel(BuildContext context) {
+    if (_deadline == null) return context.getLang.selectDate;
     final now = DateTime.now();
     if (_deadline!.year == now.year &&
         _deadline!.month == now.month &&
         _deadline!.day == now.day) {
-      return 'Today';
+      return context.getLang.today;
     }
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    return '${months[_deadline!.month - 1]} ${_deadline!.day}';
+    final locale = Localizations.localeOf(context).languageCode;
+    return '${intl.DateFormat('MMM', locale).format(_deadline!)} ${_deadline!.day}';
   }
 
-  String get _timeLabel {
-    if (_deadlineTime == null) return 'Select time';
+  String _timeLabel(BuildContext context) {
+    if (_deadlineTime == null) return context.getLang.selectTime;
     final h = _deadlineTime!.hour;
     final m = _deadlineTime!.minute.toString().padLeft(2, '0');
     final hour = h == 0 ? 12 : (h > 12 ? h - 12 : h);
@@ -93,7 +92,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-
+    final lang = context.getLang;
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
@@ -119,7 +118,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               ),
             ),
             Text(
-              'New Task',
+              lang.newTask,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w700,
@@ -128,7 +127,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               ),
             ),
             SizedBox(height: 20.h),
-            _FieldLabel('Task Name'),
+            _FieldLabel(lang.taskName),
             SizedBox(height: 6.h),
             TextFormField(
               controller: _titleController,
@@ -138,7 +137,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 if (_isSubmitEnabled && !_isSubmitting) _submit();
               },
               decoration: InputDecoration(
-                hintText: 'Enter task title...',
+                hintText: lang.enterTaskTitle,
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.r),
                   borderSide: BorderSide(
@@ -148,10 +147,10 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 ),
               ),
               validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Title is required' : null,
+                  (v == null || v.trim().isEmpty) ? lang.titleRequired : null,
             ),
             SizedBox(height: 16.h),
-            _FieldLabel('Priority'),
+            _FieldLabel(lang.priority),
             SizedBox(height: 6.h),
             Container(
               decoration: BoxDecoration(
@@ -170,7 +169,11 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                         (p) => DropdownMenuItem(
                           value: p,
                           child: Text(
-                            '${p.label} Priority',
+                            switch (p) {
+                              TaskPriority.high => lang.highPriority,
+                              TaskPriority.medium => lang.mediumPriority,
+                              TaskPriority.low => lang.lowPriority,
+                            },
                             style: TextStyle(
                               fontSize: 14.sp,
                               color: colorScheme.onSurface,
@@ -189,13 +192,13 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               ),
             ),
             SizedBox(height: 16.h),
-            _FieldLabel('Deadline'),
+            _FieldLabel(lang.deadline),
             SizedBox(height: 6.h),
             Row(
               children: [
                 Expanded(
                   child: _DateTimeField(
-                    label: _dateLabel,
+                    label: _dateLabel(context),
                     icon: Icons.calendar_today_outlined,
                     isPlaceholder: _deadline == null,
                     onTap: _pickDate,
@@ -204,7 +207,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 SizedBox(width: 12.w),
                 Expanded(
                   child: _DateTimeField(
-                    label: _timeLabel,
+                    label: _timeLabel(context),
                     icon: Icons.access_time_rounded,
                     isPlaceholder: _deadlineTime == null,
                     onTap: _pickTime,
@@ -226,9 +229,9 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                     ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                    child: Text(
+                      lang.cancel,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -251,9 +254,9 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                               color: Colors.white,
                             ),
                           )
-                        : const Text(
-                            'Add Task',
-                            style: TextStyle(fontWeight: FontWeight.w600),
+                        : Text(
+                            lang.addTask,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
                   ),
                 ),

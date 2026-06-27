@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/extensions/localization.dart';
 import '../../domain/entities/task.dart';
 import '../../domain/enums/task_priority.dart';
 import '../../domain/enums/task_status.dart';
@@ -113,21 +114,22 @@ class _PriorityChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.getLang;
     final (baseColor, textColor, label) = switch (priority) {
       TaskPriority.high => (
           const Color(0xFFF59E0B),
           const Color(0xFFB45309),
-          'HIGH',
+          lang.priorityHigh,
         ),
       TaskPriority.medium => (
           const Color(0xFF3B82F6),
           const Color(0xFF1D4ED8),
-          'MEDIUM',
+          lang.priorityMedium,
         ),
       TaskPriority.low => (
           const Color(0xFF10B981),
           const Color(0xFF15803D),
-          'LOW',
+          lang.priorityLow,
         ),
     };
 
@@ -156,10 +158,11 @@ class _StatusDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.getLang;
     final (dotColor, label) = switch (status) {
-      TaskStatus.pending => (const Color(0xFF777587), 'Pending'),
-      TaskStatus.inProgress => (const Color(0xFF3B82F6), 'In Progress'),
-      TaskStatus.done => (const Color(0xFF10B981), 'Done'),
+      TaskStatus.pending => (const Color(0xFF777587), lang.statusPending),
+      TaskStatus.inProgress => (const Color(0xFF3B82F6), lang.statusInProgress),
+      TaskStatus.done => (const Color(0xFF10B981), lang.statusDone),
     };
 
     return Row(

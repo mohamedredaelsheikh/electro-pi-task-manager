@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/extensions/localization.dart';
 import '../../domain/entities/project.dart';
 import '../../domain/enums/project_status.dart';
 
@@ -83,21 +84,22 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.getLang;
     final (baseColor, textColor, label) = switch (status) {
       ProjectStatus.pending => (
           const Color(0xFFF59E0B),
           const Color(0xFFB45309),
-          'Pending',
+          lang.statusPending,
         ),
       ProjectStatus.inProgress => (
           const Color(0xFF3B82F6),
           const Color(0xFF1D4ED8),
-          'In Progress',
+          lang.statusInProgress,
         ),
       ProjectStatus.done => (
           const Color(0xFF10B981),
           const Color(0xFF15803D),
-          'Done',
+          lang.statusDone,
         ),
     };
 

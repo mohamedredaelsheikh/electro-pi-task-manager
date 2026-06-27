@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/extensions/localization.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/section_label.dart';
@@ -71,9 +72,9 @@ class ProjectDetailsPage extends StatelessWidget {
         foregroundColor: colorScheme.onPrimary,
         elevation: 0,
         icon: const Icon(Icons.add_rounded),
-        label: const Text(
-          'Add Task',
-          style: TextStyle(fontWeight: FontWeight.w600),
+        label: Text(
+          context.getLang.addTask,
+          style: const TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
       body: BlocBuilder<TasksCubit, TasksState>(
@@ -90,8 +91,8 @@ class ProjectDetailsPage extends StatelessWidget {
                 Expanded(
                   child: EmptyStateWidget(
                     icon: Icons.task_alt_rounded,
-                    title: 'No tasks yet',
-                    subtitle: 'Tap "Add Task" to create the first one.',
+                    title: context.getLang.noTasksYet,
+                    subtitle: context.getLang.noTasksSubtitle,
                   ),
                 ),
               ],
@@ -106,11 +107,11 @@ class ProjectDetailsPage extends StatelessWidget {
                     child: ListView.builder(
                       padding: EdgeInsets.only(bottom: 120.h),
                       itemCount: tasks.length + 1,
-                      itemBuilder: (_, i) {
+                      itemBuilder: (context, i) {
                         if (i == 0) {
                           return Padding(
                             padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 8.h),
-                            child: const SectionLabel('TODAY'),
+                            child: SectionLabel(context.getLang.todayLabel),
                           );
                         }
                         return TaskCard(task: tasks[i - 1]);
@@ -150,7 +151,7 @@ class _ProgressCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'PROGRESS',
+            context.getLang.progressLabel,
             style: TextStyle(
               fontSize: 11.sp,
               fontWeight: FontWeight.w600,

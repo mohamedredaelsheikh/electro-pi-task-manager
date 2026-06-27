@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../extensions/localization.dart';
+
 class MainShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
   const MainShell({super.key, required this.navigationShell});
@@ -26,17 +28,17 @@ class MainShell extends StatelessWidget {
           NavigationDestination(
             icon: Icon(Icons.folder_outlined, color: colorScheme.outline),
             selectedIcon: Icon(Icons.folder_rounded, color: colorScheme.primary),
-            label: 'Projects',
+            label: context.getLang.projects,
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline_rounded, color: colorScheme.outline),
             selectedIcon: Icon(Icons.person_rounded, color: colorScheme.primary),
-            label: 'Profile',
+            label: context.getLang.profile,
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined, color: colorScheme.outline),
             selectedIcon: Icon(Icons.settings_rounded, color: colorScheme.primary),
-            label: 'Settings',
+            label: context.getLang.settings,
           ),
         ],
       ),

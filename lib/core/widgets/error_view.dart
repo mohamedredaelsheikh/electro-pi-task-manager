@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../extensions/localization.dart';
+
 class ErrorView extends StatelessWidget {
   final String message;
   final VoidCallback? onRetry;
@@ -28,7 +30,7 @@ class ErrorView extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Retry'),
+                label: Text(context.getLang.retry),
               ),
             ],
           ],

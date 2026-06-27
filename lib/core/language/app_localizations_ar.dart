@@ -212,4 +212,76 @@ class SAr extends S {
 
   @override
   String get oops => 'عذراً!';
+
+  @override
+  String get addTask => 'إضافة مهمة';
+
+  @override
+  String get newTask => 'مهمة جديدة';
+
+  @override
+  String get noTasksYet => 'لا توجد مهام بعد';
+
+  @override
+  String get noTasksSubtitle => 'اضغط على "إضافة مهمة" للبدء.';
+
+  @override
+  String get todayLabel => 'اليوم';
+
+  @override
+  String get progressLabel => 'التقدم';
+
+  @override
+  String get taskName => 'اسم المهمة';
+
+  @override
+  String get enterTaskTitle => 'أدخل عنوان المهمة...';
+
+  @override
+  String get titleRequired => 'العنوان مطلوب';
+
+  @override
+  String get priority => 'الأولوية';
+
+  @override
+  String get deadline => 'الموعد النهائي';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get selectDate => 'اختر تاريخاً';
+
+  @override
+  String get today => 'اليوم';
+
+  @override
+  String get selectTime => 'اختر وقتاً';
+
+  @override
+  String get highPriority => 'أولوية عالية';
+
+  @override
+  String get mediumPriority => 'أولوية متوسطة';
+
+  @override
+  String get lowPriority => 'أولوية منخفضة';
+
+  @override
+  String get priorityHigh => 'عالية';
+
+  @override
+  String get priorityMedium => 'متوسطة';
+
+  @override
+  String get priorityLow => 'منخفضة';
+
+  @override
+  String get statusPending => 'قيد الانتظار';
+
+  @override
+  String get statusInProgress => 'قيد التنفيذ';
+
+  @override
+  String get statusDone => 'مكتمل';
 }

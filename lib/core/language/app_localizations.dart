@@ -504,6 +504,33 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Oops!'**
   String get oops;
+
+  String get addTask;
+  String get newTask;
+  String get noTasksYet;
+  String get noTasksSubtitle;
+  String get todayLabel;
+  String get progressLabel;
+
+  String get taskName;
+  String get enterTaskTitle;
+  String get titleRequired;
+  String get priority;
+  String get deadline;
+  String get cancel;
+  String get selectDate;
+  String get today;
+  String get selectTime;
+  String get highPriority;
+  String get mediumPriority;
+  String get lowPriority;
+
+  String get priorityHigh;
+  String get priorityMedium;
+  String get priorityLow;
+  String get statusPending;
+  String get statusInProgress;
+  String get statusDone;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

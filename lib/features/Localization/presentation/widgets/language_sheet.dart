@@ -20,33 +20,37 @@ class LanguageSheet extends StatelessWidget {
         final langCubit = context.read<LangCubit>();
         final languages = langCubit.getSupportedLanguages();
 
-        return SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 28.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                BottomSheetOptionBar(
-                  title: context.getLang.languages.firstCapital() ?? '',
-                ),
-                SizedBox(height: 16.h),
-                ...languages.map(
-                  (language) => InkWell(
-                    onTap: () async {
-                      await langCubit.changeLanguage(language);
-                      if (context.mounted) Navigator.pop(context);
-                    },
-                    borderRadius: BorderRadius.circular(8.r),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12.h),
-                      child: LanguageType(
-                        language: language,
-                        isSelected: langCubit.isSelected(language),
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return ColoredBox(
+          color: isDark ? context.primary : Colors.white,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 28.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  BottomSheetOptionBar(
+                    title: context.getLang.languages.firstCapital() ?? '',
+                  ),
+                  SizedBox(height: 16.h),
+                  ...languages.map(
+                    (language) => InkWell(
+                      onTap: () async {
+                        await langCubit.changeLanguage(language);
+                        if (context.mounted) Navigator.pop(context);
+                      },
+                      borderRadius: BorderRadius.circular(8.r),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        child: LanguageType(
+                          language: language,
+                          isSelected: langCubit.isSelected(language),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

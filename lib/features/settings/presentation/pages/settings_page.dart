@@ -54,7 +54,11 @@ class SettingsPage extends StatelessWidget {
                         ? colorScheme.primary
                         : colorScheme.outlineVariant,
                   ),
-                  trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                  trackOutlineColor: WidgetStateProperty.resolveWith(
+                    (states) => states.contains(WidgetState.selected)
+                        ? colorScheme.primary
+                        : colorScheme.outline,
+                  ),
                 ),
               ),
               Divider(
