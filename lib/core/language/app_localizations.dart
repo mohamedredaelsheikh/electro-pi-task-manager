@@ -67,12 +67,6 @@ abstract class S {
 
   final String localeName;
 
-  static S? _current;
-
-  // Access the current locale's strings without a BuildContext —
-  // valid after the first frame (delegate sets this in load()).
-  static S get current => _current!;
-
   static S of(BuildContext context) {
     return Localizations.of<S>(context, S)!;
   }
@@ -517,9 +511,7 @@ class _SDelegate extends LocalizationsDelegate<S> {
 
   @override
   Future<S> load(Locale locale) {
-    final instance = lookupS(locale);
-    S._current = instance;
-    return SynchronousFuture<S>(instance);
+    return SynchronousFuture<S>(lookupS(locale));
   }
 
   @override

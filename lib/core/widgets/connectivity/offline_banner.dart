@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:electro_pi_task_manager/core/extensions/localization.dart';
 import 'package:electro_pi_task_manager/core/language/app_localizations.dart';
 import 'package:electro_pi_task_manager/core/widgets/toast.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,13 @@ class _OfflineBannerState extends State<OfflineBanner> {
   late final StreamSubscription<List<ConnectivityResult>> _sub;
   ToastificationItem? _offlineToast;
   bool _isOffline = false;
+  late S _strings;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _strings = context.getLang;
+  }
 
   @override
   void initState() {
@@ -34,7 +42,7 @@ class _OfflineBannerState extends State<OfflineBanner> {
       _offlineToast = toastification.show(
         type: ToastificationType.error,
         style: ToastificationStyle.fillColored,
-        description: Text(S.current.no_internet_connection),
+        description: Text(_strings.no_internet_connection),
         alignment: AlignmentDirectional.bottomCenter,
         autoCloseDuration: const Duration(seconds: 3),
       );
@@ -42,7 +50,7 @@ class _OfflineBannerState extends State<OfflineBanner> {
       _isOffline = false;
       _dismissOfflineToast();
       Toaster.showToast(
-        description: S.current.back_online,
+        description: _strings.back_online,
         type: ToastificationType.success,
         duration: const Duration(seconds: 3),
       );

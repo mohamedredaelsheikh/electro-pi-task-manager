@@ -1,5 +1,4 @@
 import 'package:electro_pi_task_manager/core/extensions/localization.dart';
-import 'package:electro_pi_task_manager/core/language/app_localizations.dart';
 import 'package:electro_pi_task_manager/core/theming/extensions/color_theme.dart';
 import 'package:electro_pi_task_manager/core/theming/extensions/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -17,14 +16,15 @@ class AppErrorWidget extends StatelessWidget {
   final VoidCallback? onRetry;
   final bool sliver;
 
-  bool _isNetworkError() {
-    return message == S.current.no_internet_connection ||
-        message == S.current.timeout_error;
+  bool _isNetworkError(BuildContext context) {
+    final lang = context.getLang;
+    return message == lang.no_internet_connection ||
+        message == lang.timeout_error;
   }
 
   @override
   Widget build(BuildContext context) {
-    final isNetwork = _isNetworkError();
+    final isNetwork = _isNetworkError(context);
 
     final content = Column(
       mainAxisAlignment: MainAxisAlignment.center,
